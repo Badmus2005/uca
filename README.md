@@ -104,77 +104,113 @@ ucaotech_dofbot_trc2025/
 ├── 📄 README.md                        ⭐ Ce document
 ├── 📄 QUICKSTART.md                    🚀 Démarrage rapide (5 min)
 ├── 📄 CHANGELOG.md                     📝 Historique versions
-├── 📄 RAPPORT_TESTS_FINAL.md           🧪 Résultats tests complets
+├── 📄 CONTRIBUTING.md                  👥 Guide contribution
+├── 📄 LICENSE                          ⚖️ Licence MIT
 ├── 📄 requirements.txt                 📦 Dépendances Python
+├── 📄 .gitignore                       🚫 Fichiers exclus Git
 │
 ├── 📁 config/                          ⚙️ Configurations
+│   ├── camera_params.yaml              📷 Paramètres caméra
 │   ├── positions.yaml                  🎮 Positions calibrées bras
-│   ├── yolov5_params.yaml              🤖 Paramètres modèle vision
-│   └── camera_params.yaml              📷 Paramètres caméra
+│   └── yolov5_params.yaml              🤖 Paramètres modèle vision
 │
-├── 📁 models/                          🧠 Modèles IA
-│   ├── best.pt                         ✅ YOLOv5m entraîné (40.6 MB)
-│   └── yolov5/                         📦 Framework YOLOv5
+├── 📁 models/                          🧠 Modèles IA (40 MB - non versionné)
+│   ├── best.pt                         ✅ YOLOv5 entraîné final
+│   ├── yolov5/                         📦 Framework YOLOv5
+│   └── README.md                       📘 Guide modèles
 │
-├── 📁 scripts/                         📜 Scripts Python
+├── 📁 scripts/                         📜 Scripts utilitaires
 │   ├── calibrate_positions.py          🎮 Calibration console
 │   ├── calibration_server.py           🌐 Serveur WebSocket calibration
-│   └── test_*.py                       🧪 Scripts de test
+│   ├── test_model.py                   🧪 Test modèle
+│   └── deploy_to_jetson.sh             🚀 Script déploiement Jetson
 │
 ├── 📁 ros_package/                     📦 Package ROS
-│   ├── ucaotech_dofbot_trc2025/
-│   │   ├── launch/
-│   │   │   ├── tri.launch              🚀 Lancement système complet
-│   │   │   └── simulation.launch       🧪 Mode simulation
-│   │   ├── msg/
-│   │   │   └── Classification.msg      📨 Message ROS classification
-│   │   ├── srv/
-│   │   │   └── TriCommande.srv         🔧 Service ROS commande tri
-│   │   └── src/
-│   │       ├── final_camera_node.py    📷 Nœud caméra
-│   │       ├── vision_node.py          👁️ Nœud vision YOLOv5
-│   │       └── i2c_controller_node.py  🎮 Nœud contrôleur I2C
-│   ├── CMakeLists.txt
-│   └── package.xml
+│   ├── CMakeLists.txt                  🔧 Build ROS
+│   ├── package.xml                     � Métadonnées ROS
+│   ├── launch/
+│   │   └── tri.launch                  🚀 Lancement système complet
+│   ├── scripts/
+│   │   ├── dofbot_tri_system.py        🤖 Système principal
+│   │   ├── final_camera_node.py        📷 Nœud caméra
+│   │   ├── vision_node.py              👁️ Nœud vision YOLOv5
+│   │   └── i2c_controller_node.py      🎮 Nœud contrôleur I2C
+│   └── srv/
+│       └── Classify.srv                🔧 Service ROS classification
 │
-├── 📁 tests/                           🧪 Tests
-│   ├── test_camera_node.py
-│   ├── test_vision_node.py
-│   ├── test_controller_node.py
-│   └── test_yolov5_model.py
+├── 📁 tests/                           🧪 Tests unitaires
+│   ├── test_camera.py                  📷 Test caméra
+│   ├── test_vision_node.py             👁️ Test vision
+│   ├── test_dofbot_movements.py        🤖 Test mouvements
+│   ├── test_integration.py             🔗 Test intégration
+│   └── test_yolov5_model.py            🧠 Test modèle
 │
-├── 📁 web/                             🌐 Interface Web
-│   ├── calibration_interface.html      🎮 Interface calibration
-│   ├── config.js                       ⚙️ Configuration serveur
+├── 📁 web/                             🌐 Interface web calibration
+│   ├── calibration_interface.html      🎮 Interface graphique
+│   ├── config.js                       ⚙️ Configuration WebSocket
 │   └── README.md                       📘 Guide interface web
 │
-├── 📁 docs/                            📚 Documentation
-│   ├── INDEX.md                        📑 Table des matières
-│   ├── guides/                         👥 Guides utilisateur
-│   │   ├── CALIBRATION.md              🎮 Guide calibration complet
-│   │   ├── DEPLOYMENT.md               🚀 Guide déploiement
+├── 📁 docs/                            📚 Documentation complète
+│   ├── INDEX.md                        📑 Navigation documentation
+│   │
+│   ├── 📁 guides/                      👥 Guides utilisateur
+│   │   ├── CALIBRATION.md              🎮 Calibration complète (900+ lignes)
+│   │   ├── DEPLOYMENT.md               🚀 Déploiement (700+ lignes)
 │   │   ├── NETWORK_CONFIG.md           🌐 Configuration réseau
-│   │   └── COMPETITION_TRC2025.md      🏆 Guide compétition
-│   ├── technical/                      🔧 Documentation technique
-│   │   ├── ARCHITECTURE.md             🏗️ Architecture détaillée
-│   │   ├── API_REFERENCE.md            📚 Référence API
-│   │   ├── VISION_NODE.md              👁️ Nœud vision
-│   │   └── TESTING.md                  🧪 Guide tests
-│   ├── references/                     📖 Références
-│   │   ├── Manuel_TRC2025.pdf          📄 Règlement officiel
-│   │   └── HARDWARE_SPECS.md           🔧 Spécifications matériel
-│   └── archives/                       📦 Archives
+│   │   └── COMPETITION_TRC2025.md      🏆 Guide compétition (800+ lignes)
+│   │
+│   ├── 📁 technical/                   🔧 Documentation technique
+│   │   ├── ARCHITECTURE.md             🏗️ Architecture (900+ lignes)
+│   │   ├── API_REFERENCE.md            📚 API complète (1000+ lignes)
+│   │   ├── VISION_NODE.md              👁️ Nœud vision détaillé
+│   │   └── TESTING.md                  🧪 Guide tests (800+ lignes)
+│   │
+│   ├── 📁 references/                  📖 Références techniques
+│   │   ├── README.md                   � Index références
+│   │   └── HARDWARE_SPECS.md           🔧 Specs matériel (800+ lignes)
+│   │
+│   └── 📁 archives/                    📦 Documentation historique
+│       ├── README.md                   📑 Index archives (27 docs)
+│       ├── ANALYSE_FICHIERS_IGNORER.md 📊 Analyse optimisation
+│       ├── RAPPORT_NETTOYAGE_FINAL.md  🧹 Rapport nettoyage
+│       ├── RAPPORT_OPTIMISATION_GIT.md 📈 Optimisation Git
+│       ├── RAPPORT_CONFLIT_GIT.md      🔄 Résolution conflits
+│       ├── MISSION_ACCOMPLIE.md        🎉 Rapport final
+│       └── 2025-10-16_*.md             �️ Archives datées (22 docs)
 │
-├── 📁 trc2025_train_models/            🎓 Entraînement modèles
-│   ├── README.md                       📘 Guide entraînement
-│   ├── config/                         ⚙️ Configs entraînement
-│   ├── data/                           📊 Datasets
-│   ├── models/                         🤖 Modèles bruts
-│   └── scripts/                        📜 Scripts entraînement
-│
-└── 📁 REFERENCES/                      📚 Références externes
-    └── (documentation externe)
+└── 📁 trc2025_train_models/            🎓 Entraînement ML (250 MB - non versionné)
+    ├── README.md                       📘 Guide entraînement simplifié
+    ├── requirements.txt                📦 Dépendances ML
+    │
+    ├── 📁 config/                      ⚙️ Configs entraînement
+    │   ├── hyp.yaml                    🎯 Hyperparamètres
+    │   └── training_config.yaml        🔧 Config training
+    │
+    ├── 📁 data/                        📊 Datasets (160 MB - non versionné)
+    │   ├── .gitkeep                    📌 Préserve structure
+    │   ├── dataset.yaml                📋 Config dataset
+    │   ├── augmented/                  🔄 Images augmentées (exclu Git)
+    │   └── prepared/                   ✅ Images préparées (exclu Git)
+    │
+    ├── 📁 models/                      🤖 Modèles training (90 MB - non versionné)
+    │   ├── .gitkeep                    📌 Préserve structure
+    │   ├── trained_models/             💾 Checkpoints (exclu Git)
+    │   └── yolov5/                     📦 Poids YOLOv5 (exclu Git)
+    │
+    ├── 📁 scripts/                     📜 Scripts entraînement
+    │   ├── augment_dataset.py          � Augmentation données
+    │   ├── train_like_original.py      🎓 Training original
+    │   ├── train_model_advanced.py     � Training avancé
+    │   ├── test_on_competition_dataset.py  🧪 Test compétition
+    │   ├── vision_node_example.py      👁️ Exemple vision
+    │   └── *.ps1                       🪟 Scripts PowerShell
+    │
+    └── 📁 docs/                        📚 Docs ML
+        ├── README.md                   📘 Documentation détaillée
+        └── archives/                   🗄️ Archives guides ML
 ```
+
+**Note importante** : Les dossiers `models/`, `trc2025_train_models/data/` et `trc2025_train_models/models/` sont **exclus de Git** (`.gitignore`) car ils contiennent des fichiers binaires lourds (330 MB total). Seule la structure et les configurations sont versionnées
 
 ---
 
