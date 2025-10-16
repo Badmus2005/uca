@@ -1,0 +1,157 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+
+# ROS
+devel/
+build/
+install/
+.catkin_workspace
+*.pyc
+
+# Logs
+logs/
+*.log
+*.out
+
+# =============================================================================
+# FICHIERS SPÉCIFIQUES AU ROBOT (NE PAS COMMITTER SUR GITHUB)
+# =============================================================================
+
+# ==========================================
+# DOSSIER REFERENCES (1.34 GB - Code original fabricant)
+# ==========================================
+REFERENCES/
+# Contient: Dofbot_original, dofbot_ws_examples, dofbot_ws_src
+# Disponible publiquement sur GitHub Yahboom
+
+# ==========================================
+# MODÈLES ML ENTRAÎNÉS (130+ MB)
+# ==========================================
+# Dossier models racine
+models/
+
+# Modèles YOLOv5 entraînés
+trc2025_train_models/models/trained_models/
+trc2025_train_models/models/yolov5/
+
+# Tous fichiers modèles ML
+*.pt
+*.pth
+*.weights
+*.onnx
+*.engine
+*.h5
+*.pb
+*.tflite
+*.mlmodel
+
+# ==========================================
+# DATASETS D'ENTRAÎNEMENT (160+ MB)
+# ==========================================
+# Dossiers images entraînement
+trc2025_train_models/data/augmented/
+trc2025_train_models/data/prepared/
+trc2025_train_models/data/raw/
+trc2025_train_models/data/train/
+trc2025_train_models/data/val/
+trc2025_train_models/data/test/
+
+# Images (sauf samples pour documentation)
+trc2025_train_models/data/**/*.jpg
+trc2025_train_models/data/**/*.png
+trc2025_train_models/data/**/*.jpeg
+trc2025_train_models/data/**/*.bmp
+
+# Annotations volumineuses
+trc2025_train_models/data/**/*.xml
+trc2025_train_models/data/**/*.json
+
+# Archives datasets
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# ==========================================
+# DOCUMENTS PDF (Copyright)
+# ==========================================
+# Manuels officiels compétition
+docs/references/*.pdf
+Manuel*.pdf
+*_manual.pdf
+*_guide.pdf
+
+# ==========================================
+# CONFIGURATIONS SPÉCIFIQUES ROBOT
+# ==========================================
+# Calibration robot (spécifique à chaque setup)
+config/robot_*.yaml
+config/calibration_*.json
+config/camera_calibration_*.npz
+config/*_calibration.yaml
+
+# Paramètres réseau spécifiques
+config/network_local.yaml
+config/ip_config.json
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Documentation builds
+docs/_build/
+site/
+
+# Archives (garder structure mais pas contenu détaillé si souhaité)
+# docs/archives/*.md

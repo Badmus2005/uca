@@ -1,0 +1,10 @@
+<launch>
+    <!-- Service de kinématique inverse existant -->
+    <node pkg="arm_info" type="kinemarics_arm" name="kinemarics_server" output="screen" />
+    
+    <!-- N?ud de classification -->
+    <node pkg="dofbot_tri" type="vision_node.py" name="vision_node" output="screen" />
+    
+    <!-- Contrôleur principal -->
+    <node pkg="dofbot_tri" type="i2c_controller_node.py" name="dofbot_tri_controller" output="screen" />
+</launch>

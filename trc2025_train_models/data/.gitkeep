@@ -1,0 +1,21 @@
+# Dossier Data
+
+⚠️ **Ce dossier contient des fichiers NON versionnés sur GitHub**
+
+## Contenu (sur le robot uniquement)
+
+- `prepared/` - Images préparées pour entraînement
+- `augmented/` - Images augmentées (rotation, flip, etc.)
+- `dataset.yaml` - Configuration dataset (versionné)
+
+## Pourquoi pas sur GitHub ?
+
+1. **Taille** : Plusieurs Go d'images
+2. **Copyright** : Images de la compétition TRC2025
+3. **Inutile** : Chaque équipe a son propre dataset
+
+## Comment obtenir le dataset ?
+
+1. Collecter vos propres images lors des entraînements
+2. Voir `scripts/collect_training_data.py`
+3. Suivre `docs/guides/COMPETITION_TRC2025.md`
