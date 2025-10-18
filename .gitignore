@@ -112,14 +112,6 @@ trc2025_train_models/data/**/*.json
 *.tar.gz
 *.rar
 
-# ==========================================
-# DOCUMENTS PDF (Copyright)
-# ==========================================
-# Manuels officiels compétition
-docs/references/*.pdf
-Manuel*.pdf
-*_manual.pdf
-*_guide.pdf
 
 # ==========================================
 # CONFIGURATIONS SPÉCIFIQUES ROBOT

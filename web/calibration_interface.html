@@ -4,8 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🤖 Calibration DOFbot - TRC 2025 Cotonou 🇧🇯</title>
+    <title>Calibration DOFbot - TRC 2025 Cotonou</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #1a1a2e;
+            --secondary: #16213e;
+            --accent: #0f3460;
+            --highlight: #e94560;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --dark: #0f1419;
+            --light: #f5f7fa;
+            --gray: #95a5a6;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.12);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,46 +29,76 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: var(--light);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
             color: white;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
+            position: relative;
+            border-bottom: 1px solid var(--card-border);
         }
 
         .header h1 {
-            font-size: 2.5em;
+            font-size: 2.2em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            letter-spacing: 1px;
         }
 
         .header .subtitle {
-            font-size: 1.2em;
+            font-size: 1.1em;
             opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .logos {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .logo-placeholder {
+            width: 80px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8em;
+            text-align: center;
         }
 
         .status-bar {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.05);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 1px solid var(--card-border);
         }
 
         .status-indicator {
@@ -70,16 +115,16 @@
         }
 
         .status-dot.connected {
-            background: #28a745;
+            background: var(--success);
         }
 
         .status-dot.disconnected {
-            background: #dc3545;
+            background: var(--highlight);
             animation: none;
         }
 
         .status-dot.simulation {
-            background: #ffc107;
+            background: var(--warning);
         }
 
         @keyframes pulse {
@@ -94,64 +139,128 @@
             }
         }
 
+        /* NOUVELLE DISPOSITION - Layout principal */
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             padding: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Colonne de gauche - Contrôles */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Colonne de droite - Visualisation */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
         }
 
         .panel {
-            background: #f8f9fa;
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--card-border);
+        }
+
+        .panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .panel h2 {
-            color: #667eea;
+            color: var(--highlight);
             margin-bottom: 20px;
             font-size: 1.5em;
             display: flex;
             align-items: center;
             gap: 10px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 10px;
+        }
+
+        .joint-controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .joint-controls-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .joint-controls-grid::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .joint-controls-grid::-webkit-scrollbar-thumb {
+            background: var(--highlight);
+            border-radius: 10px;
+        }
+
+        .joint-controls-grid::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
         }
 
         .joint-control {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .joint-control:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-3px);
         }
 
         .joint-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .joint-name {
             font-weight: bold;
-            color: #495057;
+            color: var(--light);
+            font-size: 1.1em;
         }
 
         .joint-value {
-            font-size: 1.5em;
-            color: #667eea;
+            font-size: 1.8em;
+            color: var(--highlight);
             font-weight: bold;
         }
 
         .slider-container {
             position: relative;
+            margin: 15px 0;
         }
 
         .slider {
             width: 100%;
             height: 8px;
             border-radius: 5px;
-            background: #e9ecef;
+            background: rgba(255, 255, 255, 0.1);
             outline: none;
             -webkit-appearance: none;
             appearance: none;
@@ -163,33 +272,46 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--highlight) 0%, var(--accent) 100%);
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            border: 2px solid white;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .slider::-moz-range-thumb {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--highlight) 0%, var(--accent) 100%);
             cursor: pointer;
-            border: none;
+            border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .limits {
             display: flex;
             justify-content: space-between;
             font-size: 0.85em;
-            color: #6c757d;
+            color: var(--gray);
             margin-top: 5px;
         }
 
         .quick-adjust {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .quick-btn {
@@ -197,59 +319,77 @@
             padding: 8px;
             border: none;
             border-radius: 5px;
-            background: #e9ecef;
+            background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            color: var(--light);
         }
 
         .quick-btn:hover {
-            background: #667eea;
+            background: var(--highlight);
             color: white;
             transform: translateY(-2px);
         }
 
         .preset-buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
 
         .preset-btn {
-            padding: 20px;
+            padding: 15px 10px;
             border: none;
             border-radius: 10px;
-            font-size: 1.1em;
+            font-size: 0.95em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .preset-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .preset-btn:hover::after {
+            left: 100%;
         }
 
         .preset-btn.home {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
+            background: linear-gradient(135deg, var(--success), #27ae60);
         }
 
         .preset-btn.observation {
-            background: linear-gradient(135deg, #17a2b8, #007bff);
-            color: white;
+            background: linear-gradient(135deg, var(--accent), #0f3460);
         }
 
         .preset-btn.bin1 {
-            background: linear-gradient(135deg, #dc3545, #e74c3c);
-            color: white;
+            background: linear-gradient(135deg, var(--highlight), #e94560);
         }
 
         .preset-btn.bin2 {
-            background: linear-gradient(135deg, #28a745, #27ae60);
-            color: white;
+            background: linear-gradient(135deg, var(--warning), #f39c12);
         }
 
         .preset-btn.bin3 {
-            background: linear-gradient(135deg, #007bff, #3498db);
-            color: white;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
         }
 
         .preset-btn:hover {
@@ -259,7 +399,7 @@
 
         .action-buttons {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-top: 20px;
         }
@@ -273,25 +413,48 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+
+        .action-btn:hover::before {
+            transform: translateX(0);
         }
 
         .action-btn.save {
-            background: #ffc107;
+            background: var(--warning);
             color: #333;
         }
 
         .action-btn.test {
-            background: #17a2b8;
+            background: var(--accent);
             color: white;
         }
 
         .action-btn.reset {
-            background: #6c757d;
+            background: var(--gray);
             color: white;
         }
 
         .action-btn.export {
-            background: #28a745;
+            background: var(--success);
             color: white;
         }
 
@@ -306,8 +469,8 @@
             transform: none;
         }
 
-        .visualization {
-            background: white;
+        .visualization-container {
+            background: var(--card-bg);
             border-radius: 10px;
             padding: 20px;
             min-height: 400px;
@@ -315,75 +478,20 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-
-        .robot-arm {
             position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 20px auto;
+            overflow: hidden;
+            height: 100%;
         }
 
-        .arm-segment {
+        .visualization-container::before {
+            content: '';
             position: absolute;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 8px;
-            transform-origin: left center;
-            transition: transform 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .base {
-            width: 60px;
-            height: 60px;
-            background: #495057;
-            border-radius: 50%;
-            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .gripper {
-            width: 30px;
-            height: 15px;
-            background: #dc3545;
-            border-radius: 5px;
-            position: absolute;
-        }
-
-        .log-panel {
-            background: #212529;
-            color: #00ff00;
-            border-radius: 10px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-
-        .log-entry {
-            margin: 5px 0;
-            padding: 5px;
-            border-left: 3px solid #00ff00;
-            padding-left: 10px;
-        }
-
-        .log-entry.error {
-            border-left-color: #dc3545;
-            color: #ff6b6b;
-        }
-
-        .log-entry.warning {
-            border-left-color: #ffc107;
-            color: #ffc107;
-        }
-
-        .log-entry.success {
-            border-left-color: #28a745;
-            color: #51cf66;
+            background: radial-gradient(circle at center, rgba(233, 69, 96, 0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .coordinates-display {
@@ -391,29 +499,146 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin: 20px 0;
+            width: 100%;
         }
 
         .coord-box {
-            background: white;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 8px;
             padding: 15px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid var(--card-border);
+        }
+
+        .coord-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .coord-label {
             font-size: 0.85em;
-            color: #6c757d;
+            color: var(--gray);
             margin-bottom: 5px;
         }
 
         .coord-value {
             font-size: 1.8em;
             font-weight: bold;
-            color: #667eea;
+            color: var(--highlight);
         }
 
-        .save-modal {
+        /* Visualisation 3D avec Three.js */
+        .robot-visualization {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            margin: 20px auto;
+            border-radius: 10px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, rgba(15, 52, 96, 0.3) 0%, rgba(26, 26, 46, 0.5) 100%);
+        }
+
+        #canvas3d {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .view-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .view-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .view-btn:hover {
+            background: rgba(233, 69, 96, 0.3);
+            border-color: var(--highlight);
+        }
+
+        .loading-3d {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--light);
+        }
+
+        .loading-3d i {
+            font-size: 3em;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .log-panel {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--light);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .log-entry:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .log-entry.error {
+            border-left-color: var(--highlight);
+            color: #ff6b6b;
+        }
+
+        .log-entry.warning {
+            border-left-color: var(--warning);
+            color: #ffd166;
+        }
+
+        .log-entry.success {
+            border-left-color: var(--success);
+            color: #51cf66;
+        }
+
+        .save-modal,
+        .modal {
             display: none;
             position: fixed;
             top: 0;
@@ -424,21 +649,52 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
         }
 
         .modal-content {
-            background: white;
+            background: var(--dark);
             border-radius: 15px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
+            padding: 25px;
+            max-width: 450px;
+            width: 85%;
+            max-height: 80vh;
+            overflow-y: auto;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease-out;
+            border: 1px solid var(--card-border);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--highlight);
+            border-radius: 10px;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: var(--highlight);
         }
 
         .modal-buttons {
@@ -458,12 +714,12 @@
         }
 
         .modal-btn.confirm {
-            background: #28a745;
+            background: var(--success);
             color: white;
         }
 
         .modal-btn.cancel {
-            background: #6c757d;
+            background: var(--gray);
             color: white;
         }
 
@@ -475,19 +731,46 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
+
+            .joint-controls-grid {
+                grid-template-columns: repeat(2, 1fr);
+                max-height: none;
+            }
+
+            .preset-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .action-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .joint-controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preset-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
         }
 
         .footer {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.05);
             padding: 20px;
             text-align: center;
-            border-top: 2px solid #e9ecef;
-            color: #6c757d;
+            border-top: 1px solid var(--card-border);
+            color: var(--gray);
         }
 
         /* Configuration IP Modal */
         .config-btn {
-            background: #6c757d;
+            background: var(--gray);
             color: white;
             border: none;
             padding: 10px 20px;
@@ -499,46 +782,51 @@
         }
 
         .config-btn:hover {
-            background: #5a6268;
+            background: #7f8c8d;
             transform: translateY(-2px);
         }
 
         .ip-input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
+            padding: 10px;
+            border: 2px solid var(--card-border);
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: 1em;
             font-family: 'Courier New', monospace;
             text-align: center;
-            margin: 15px 0;
+            margin: 10px 0;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
         }
 
         .ip-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--highlight);
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
         }
 
         .ip-info {
-            background: #f8f9fa;
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
             border-radius: 8px;
-            margin: 15px 0;
-            font-size: 0.95em;
-            color: #6c757d;
+            margin: 10px 0;
+            font-size: 0.9em;
+            color: var(--gray);
         }
 
         .ip-examples {
-            background: #fff3cd;
-            padding: 15px;
+            background: rgba(243, 156, 18, 0.1);
+            padding: 12px;
             border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #ffc107;
+            margin: 10px 0;
+            border-left: 4px solid var(--warning);
         }
 
         .ip-examples h4 {
-            color: #856404;
-            margin-bottom: 10px;
+            color: var(--warning);
+            margin-bottom: 8px;
+            font-size: 0.95em;
         }
 
         .ip-examples ul {
@@ -547,8 +835,35 @@
         }
 
         .ip-examples li {
-            padding: 5px 0;
-            color: #856404;
+            padding: 3px 0;
+            color: var(--warning);
+            font-size: 0.85em;
+        }
+
+        /* Bouton de connexion */
+        .connect-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+
+        .connect-btn:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .connect-btn.disconnected {
+            background: var(--highlight);
+        }
+
+        .connect-btn.disconnected:hover {
+            background: #c0392b;
         }
     </style>
 </head>
@@ -557,8 +872,12 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🤖 Calibration DOFbot</h1>
-            <div class="subtitle">TRC 2025 - Cotonou, Bénin 🇧🇯 | Équipe Ucaotech</div>
+            <div class="logos">
+                <div class="logo-placeholder">LOGO TRC</div>
+                <div class="logo-placeholder">LOGO UCAO-TECH</div>
+            </div>
+            <h1><i class="fas fa-robot"></i> Calibration DOFBOT JETSON NANO SUB</h1>
+            <div class="subtitle">TRC 2025 | UCAO-TECH</div>
         </div>
 
         <!-- Status Bar -->
@@ -569,195 +888,162 @@
             </div>
             <div>
                 <button class="config-btn" onclick="openIPModal()">
-                    ⚙️ Configuration IP
+                    <i class="fas fa-cog"></i> Configuration IP
                 </button>
-                <button class="action-btn" onclick="toggleConnection()" id="connectBtn">
-                    🔌 Connecter
+                <button class="connect-btn" id="connectBtn" onclick="toggleConnection()">
+                    <i class="fas fa-plug"></i> Connecter
                 </button>
             </div>
         </div>
 
-        <!-- Main Content -->
+        <!-- Main Content - NOUVELLE DISPOSITION -->
         <div class="main-content">
-            <!-- Left Panel - Joint Controls -->
-            <div class="panel">
-                <h2>🎮 Contrôle des Joints</h2>
+            <!-- Colonne de gauche - Contrôles -->
+            <div class="left-column">
+                <!-- Section 1: Contrôle des Joints -->
+                <div class="panel">
+                    <h2><i class="fas fa-sliders-h"></i> Contrôle des Joints</h2>
 
-                <!-- Joint 1 - Base -->
-                <div class="joint-control">
-                    <div class="joint-header">
-                        <span class="joint-name">Joint 1 - Base (Rotation)</span>
-                        <span class="joint-value" id="joint1-value">90°</span>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="180" value="90" class="slider" id="joint1"
-                            oninput="updateJoint(1, this.value)">
-                    </div>
-                    <div class="limits">
-                        <span>0°</span>
-                        <span>180°</span>
-                    </div>
-                    <div class="quick-adjust">
-                        <button class="quick-btn" onclick="adjustJoint(1, -10)">-10°</button>
-                        <button class="quick-btn" onclick="adjustJoint(1, -1)">-1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(1, 1)">+1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(1, 10)">+10°</button>
-                    </div>
-                </div>
+                    <div class="joint-controls-grid">
+                        <!-- Joint 1 - Base -->
+                        <div class="joint-control">
+                            <div class="joint-header">
+                                <span class="joint-name">Joint 1 - Base</span>
+                                <span class="joint-value" id="joint1-value">90°</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" min="0" max="180" value="90" class="slider" id="joint1"
+                                    oninput="updateJoint(1, this.value)">
+                            </div>
+                            <div class="limits">
+                                <span>0°</span>
+                                <span>180°</span>
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="adjustJoint(1, -10)">-10°</button>
+                                <button class="quick-btn" onclick="adjustJoint(1, -1)">-1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(1, 1)">+1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(1, 10)">+10°</button>
+                            </div>
+                        </div>
 
-                <!-- Joint 2 - Shoulder -->
-                <div class="joint-control">
-                    <div class="joint-header">
-                        <span class="joint-name">Joint 2 - Shoulder (Épaule)</span>
-                        <span class="joint-value" id="joint2-value">90°</span>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="180" value="90" class="slider" id="joint2"
-                            oninput="updateJoint(2, this.value)">
-                    </div>
-                    <div class="limits">
-                        <span>0°</span>
-                        <span>180°</span>
-                    </div>
-                    <div class="quick-adjust">
-                        <button class="quick-btn" onclick="adjustJoint(2, -10)">-10°</button>
-                        <button class="quick-btn" onclick="adjustJoint(2, -1)">-1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(2, 1)">+1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(2, 10)">+10°</button>
-                    </div>
-                </div>
+                        <!-- Joint 2 - Shoulder -->
+                        <div class="joint-control">
+                            <div class="joint-header">
+                                <span class="joint-name">Joint 2 - Shoulder</span>
+                                <span class="joint-value" id="joint2-value">90°</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" min="0" max="180" value="90" class="slider" id="joint2"
+                                    oninput="updateJoint(2, this.value)">
+                            </div>
+                            <div class="limits">
+                                <span>0°</span>
+                                <span>180°</span>
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="adjustJoint(2, -10)">-10°</button>
+                                <button class="quick-btn" onclick="adjustJoint(2, -1)">-1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(2, 1)">+1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(2, 10)">+10°</button>
+                            </div>
+                        </div>
 
-                <!-- Joint 3 - Elbow -->
-                <div class="joint-control">
-                    <div class="joint-header">
-                        <span class="joint-name">Joint 3 - Elbow (Coude)</span>
-                        <span class="joint-value" id="joint3-value">90°</span>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="180" value="90" class="slider" id="joint3"
-                            oninput="updateJoint(3, this.value)">
-                    </div>
-                    <div class="limits">
-                        <span>0°</span>
-                        <span>180°</span>
-                    </div>
-                    <div class="quick-adjust">
-                        <button class="quick-btn" onclick="adjustJoint(3, -10)">-10°</button>
-                        <button class="quick-btn" onclick="adjustJoint(3, -1)">-1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(3, 1)">+1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(3, 10)">+10°</button>
-                    </div>
-                </div>
+                        <!-- Joint 3 - Elbow -->
+                        <div class="joint-control">
+                            <div class="joint-header">
+                                <span class="joint-name">Joint 3 - Elbow</span>
+                                <span class="joint-value" id="joint3-value">90°</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" min="0" max="180" value="90" class="slider" id="joint3"
+                                    oninput="updateJoint(3, this.value)">
+                            </div>
+                            <div class="limits">
+                                <span>0°</span>
+                                <span>180°</span>
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="adjustJoint(3, -10)">-10°</button>
+                                <button class="quick-btn" onclick="adjustJoint(3, -1)">-1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(3, 1)">+1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(3, 10)">+10°</button>
+                            </div>
+                        </div>
 
-                <!-- Joint 4 - Wrist -->
-                <div class="joint-control">
-                    <div class="joint-header">
-                        <span class="joint-name">Joint 4 - Wrist (Poignet)</span>
-                        <span class="joint-value" id="joint4-value">90°</span>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="180" value="90" class="slider" id="joint4"
-                            oninput="updateJoint(4, this.value)">
-                    </div>
-                    <div class="limits">
-                        <span>0°</span>
-                        <span>180°</span>
-                    </div>
-                    <div class="quick-adjust">
-                        <button class="quick-btn" onclick="adjustJoint(4, -10)">-10°</button>
-                        <button class="quick-btn" onclick="adjustJoint(4, -1)">-1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(4, 1)">+1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(4, 10)">+10°</button>
-                    </div>
-                </div>
+                        <!-- Joint 4 - Wrist -->
+                        <div class="joint-control">
+                            <div class="joint-header">
+                                <span class="joint-name">Joint 4 - Wrist</span>
+                                <span class="joint-value" id="joint4-value">90°</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" min="0" max="180" value="90" class="slider" id="joint4"
+                                    oninput="updateJoint(4, this.value)">
+                            </div>
+                            <div class="limits">
+                                <span>0°</span>
+                                <span>180°</span>
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="adjustJoint(4, -10)">-10°</button>
+                                <button class="quick-btn" onclick="adjustJoint(4, -1)">-1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(4, 1)">+1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(4, 10)">+10°</button>
+                            </div>
+                        </div>
 
-                <!-- Joint 5 - Roll -->
-                <div class="joint-control">
-                    <div class="joint-header">
-                        <span class="joint-name">Joint 5 - Roll (Rotation)</span>
-                        <span class="joint-value" id="joint5-value">90°</span>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="270" value="90" class="slider" id="joint5"
-                            oninput="updateJoint(5, this.value)">
-                    </div>
-                    <div class="limits">
-                        <span>0°</span>
-                        <span>270°</span>
-                    </div>
-                    <div class="quick-adjust">
-                        <button class="quick-btn" onclick="adjustJoint(5, -10)">-10°</button>
-                        <button class="quick-btn" onclick="adjustJoint(5, -1)">-1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(5, 1)">+1°</button>
-                        <button class="quick-btn" onclick="adjustJoint(5, 10)">+10°</button>
-                    </div>
-                </div>
+                        <!-- Joint 5 - Roll -->
+                        <div class="joint-control">
+                            <div class="joint-header">
+                                <span class="joint-name">Joint 5 - Roll</span>
+                                <span class="joint-value" id="joint5-value">90°</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" min="0" max="270" value="90" class="slider" id="joint5"
+                                    oninput="updateJoint(5, this.value)">
+                            </div>
+                            <div class="limits">
+                                <span>0°</span>
+                                <span>270°</span>
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="adjustJoint(5, -10)">-10°</button>
+                                <button class="quick-btn" onclick="adjustJoint(5, -1)">-1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(5, 1)">+1°</button>
+                                <button class="quick-btn" onclick="adjustJoint(5, 10)">+10°</button>
+                            </div>
+                        </div>
 
-                <!-- Joint 6 - Gripper -->
-                <div class="joint-control">
-                    <div class="joint-header">
-                        <span class="joint-name">Joint 6 - Gripper (Pince)</span>
-                        <span class="joint-value" id="joint6-value">30°</span>
-                    </div>
-                    <div class="slider-container">
-                        <input type="range" min="0" max="180" value="30" class="slider" id="joint6"
-                            oninput="updateJoint(6, this.value)">
-                    </div>
-                    <div class="limits">
-                        <span>0° (Fermé)</span>
-                        <span>180° (Ouvert)</span>
-                    </div>
-                    <div class="quick-adjust">
-                        <button class="quick-btn" onclick="setJoint(6, 30)">Ouvrir</button>
-                        <button class="quick-btn" onclick="setJoint(6, 135)">Fermer</button>
+                        <!-- Joint 6 - Gripper -->
+                        <div class="joint-control">
+                            <div class="joint-header">
+                                <span class="joint-name">Joint 6 - Gripper</span>
+                                <span class="joint-value" id="joint6-value">30°</span>
+                            </div>
+                            <div class="slider-container">
+                                <input type="range" min="0" max="180" value="30" class="slider" id="joint6"
+                                    oninput="updateJoint(6, this.value)">
+                            </div>
+                            <div class="limits">
+                                <span>0° (Fermé)</span>
+                                <span>180° (Ouvert)</span>
+                            </div>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="setJoint(6, 30)">Ouvrir</button>
+                                <button class="quick-btn" onclick="setJoint(6, 135)">Fermer</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Panel - Presets & Visualization -->
-            <div>
-                <!-- Preset Positions -->
+            <!-- Colonne de droite - Visualisation -->
+            <div class="right-column">
+                <!-- Section 2: Visualisation -->
                 <div class="panel">
-                    <h2>🎯 Positions Prédéfinies</h2>
-                    <div class="preset-buttons">
-                        <button class="preset-btn home" onclick="goToPosition('home')">
-                            🏠 HOME
-                        </button>
-                        <button class="preset-btn observation" onclick="goToPosition('observation')">
-                            👁️ OBSERVATION
-                        </button>
-                        <button class="preset-btn bin1" onclick="goToPosition('bin1')">
-                            🗑️ BAC 1 (Dangereux)
-                        </button>
-                        <button class="preset-btn bin2" onclick="goToPosition('bin2')">
-                            🗑️ BAC 2 (Ménagers)
-                        </button>
-                        <button class="preset-btn bin3" onclick="goToPosition('bin3')">
-                            🗑️ BAC 3 (Recyclables)
-                        </button>
-                    </div>
-
-                    <h2 style="margin-top: 30px;">⚡ Actions</h2>
-                    <div class="action-buttons">
-                        <button class="action-btn save" onclick="showSaveModal()">
-                            💾 Sauvegarder Position
-                        </button>
-                        <button class="action-btn test" onclick="testSequence()">
-                            🧪 Test Séquence
-                        </button>
-                        <button class="action-btn reset" onclick="resetPositions()">
-                            🔄 Réinitialiser
-                        </button>
-                        <button class="action-btn export" onclick="exportConfig()">
-                            📥 Exporter Config
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Visualization -->
-                <div class="panel" style="margin-top: 30px;">
-                    <h2>📊 Visualisation</h2>
-                    <div class="visualization">
+                    <h2><i class="fas fa-eye"></i> Visualisation 3D</h2>
+                    <div class="visualization-container">
                         <div class="coordinates-display">
                             <div class="coord-box">
                                 <div class="coord-label">X (mm)</div>
@@ -772,86 +1058,362 @@
                                 <div class="coord-value" id="coord-z">0</div>
                             </div>
                         </div>
-                        <div class="robot-arm" id="robotArm">
-                            <!-- Visualisation simplifiée du bras -->
-                            <div class="base"></div>
-                            <svg width="300" height="300" style="position: absolute; top: 0; left: 0;">
-                                <line id="arm1" x1="150" y1="270" x2="150" y2="200" stroke="#667eea" stroke-width="12"
-                                    stroke-linecap="round" />
-                                <line id="arm2" x1="150" y1="200" x2="200" y2="150" stroke="#764ba2" stroke-width="10"
-                                    stroke-linecap="round" />
-                                <line id="arm3" x1="200" y1="150" x2="220" y2="100" stroke="#667eea" stroke-width="8"
-                                    stroke-linecap="round" />
-                                <circle cx="150" cy="270" r="8" fill="#495057" />
-                                <circle cx="150" cy="200" r="6" fill="#495057" />
-                                <circle cx="200" cy="150" r="5" fill="#495057" />
-                                <rect id="gripper" x="215" y="95" width="10" height="20" fill="#dc3545" rx="2" />
-                            </svg>
+                        <div class="robot-visualization" id="robotVisualization">
+                            <div class="loading-3d" id="loading3d">
+                                <i class="fas fa-spinner"></i>
+                                <p>Chargement du modèle 3D...</p>
+                            </div>
+                            <canvas id="canvas3d"></canvas>
+                            <div class="view-controls">
+                                <button class="view-btn" onclick="resetCamera()" title="Réinitialiser la vue">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                                <button class="view-btn" onclick="toggleAutoRotate()" title="Rotation automatique">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Log Panel -->
-                <div class="log-panel" id="logPanel">
-                    <div class="log-entry success">✅ Interface de calibration initialisée</div>
-                    <div class="log-entry">⚙️ Mode simulation activé</div>
-                    <div class="log-entry">📡 En attente de connexion au bras DOFbot...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="footer">
-            <p>🏆 TRC 2025 - Équipe Ucaotech | Cotonou, Bénin 🇧🇯</p>
-            <p style="font-size: 0.9em; margin-top: 5px; opacity: 0.7;">
-                Interface de calibration DOFbot v1.0 | Octobre 2025
-            </p>
+        <!-- Section pleine largeur: Positions Prédéfinies et Actions -->
+        <div class="panel" style="margin: 0 30px 30px 30px;">
+            <h2><i class="fas fa-bullseye"></i> Positions Prédéfinies</h2>
+            <div class="preset-buttons">
+                <button class="preset-btn home" onclick="goToPosition('home')">
+                    <i class="fas fa-home"></i> HOME
+                </button>
+                <button class="preset-btn observation" onclick="goToPosition('observation')">
+                    <i class="fas fa-eye"></i> OBSERVATION
+                </button>
+                <button class="preset-btn bin1" onclick="goToPosition('bin1')">
+                    <i class="fas fa-trash"></i> BAC 1
+                </button>
+                <button class="preset-btn bin2" onclick="goToPosition('bin2')">
+                    <i class="fas fa-trash"></i> BAC 2
+                </button>
+                <button class="preset-btn bin3" onclick="goToPosition('bin3')">
+                    <i class="fas fa-trash"></i> BAC 3
+                </button>
+            </div>
+
+            <h2 style="margin-top: 25px;"><i class="fas fa-bolt"></i> Actions</h2>
+            <div class="action-buttons">
+                <button class="action-btn save" onclick="showSaveModal()">
+                    <i class="fas fa-save"></i> Sauvegarder
+                </button>
+                <button class="action-btn test" onclick="testSequence()">
+                    <i class="fas fa-vial"></i> Test
+                </button>
+                <button class="action-btn reset" onclick="resetPositions()">
+                    <i class="fas fa-redo"></i> Réinitialiser
+                </button>
+                <button class="action-btn export" onclick="exportConfig()">
+                    <i class="fas fa-download"></i> Exporter
+                </button>
+            </div>
         </div>
+
+        <!-- Log Panel -->
+        <div class="panel" style="margin: 0 30px 30px 30px;">
+            <h2><i class="fas fa-list"></i> Journaux de calibration</h2>
+            <div class="log-panel" id="logPanel">
+                <div class="log-entry success">Interface de calibration initialisée</div>
+                <div class="log-entry">Mode simulation activé</div>
+                <div class="log-entry">En attente de connexion au bras DOFbot...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>TRC 2025 - Équipe Ucaotech | Cotonou, Bénin</p>
+        <p style="font-size: 0.9em; margin-top: 5px; opacity: 0.7;">
+            Interface de calibration DOFbot v1.0 | Octobre 2025
+        </p>
+    </div>
     </div>
 
     <!-- Save Modal -->
     <div class="save-modal" id="saveModal">
         <div class="modal-content">
-            <h3 class="modal-header">💾 Sauvegarder Position</h3>
-            <p style="margin-bottom: 20px; color: #6c757d;">
+            <h3 class="modal-header"><i class="fas fa-save"></i> Sauvegarder Position</h3>
+            <p style="margin-bottom: 20px; color: var(--gray);">
                 Sélectionnez la position à sauvegarder :
             </p>
             <div class="preset-buttons">
                 <button class="preset-btn home" onclick="savePosition('home')">
-                    🏠 HOME
+                    <i class="fas fa-home"></i> HOME
                 </button>
                 <button class="preset-btn observation" onclick="savePosition('observation')">
-                    👁️ OBSERVATION
+                    <i class="fas fa-eye"></i> OBSERVATION
                 </button>
                 <button class="preset-btn bin1" onclick="savePosition('dangereux')">
-                    🗑️ BAC 1
+                    <i class="fas fa-trash"></i> BAC 1
                 </button>
                 <button class="preset-btn bin2" onclick="savePosition('menagers')">
-                    🗑️ BAC 2
+                    <i class="fas fa-trash"></i> BAC 2
                 </button>
                 <button class="preset-btn bin3" onclick="savePosition('recyclables')">
-                    🗑️ BAC 3
+                    <i class="fas fa-trash"></i> BAC 3
                 </button>
             </div>
             <div class="modal-buttons">
                 <button class="modal-btn cancel" onclick="closeSaveModal()">
-                    ❌ Annuler
+                    <i class="fas fa-times"></i> Annuler
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Modal de configuration IP -->
+    <div class="modal" id="ipConfigModal" style="display: none;">
+        <div class="modal-content">
+            <h2><i class="fas fa-cog"></i> Configuration Serveur</h2>
+
+            <div class="ip-info">
+                <strong>Connexion actuelle:</strong>
+                <div id="currentIPDisplay"
+                    style="font-family: 'Courier New', monospace; font-size: 1.2em; margin-top: 10px;">
+                    Non configuré
+                </div>
+            </div>
+
+            <label for="serverIPInput"><strong>Adresse IP du Jetson Nano:</strong></label>
+            <input type="text" id="serverIPInput" class="ip-input" placeholder="192.168.1.100 ou localhost" />
+
+            <label for="serverPortInput"><strong>Port:</strong></label>
+            <input type="number" id="serverPortInput" class="ip-input" value="8765" />
+
+            <div class="ip-examples">
+                <h4>Exemples d'utilisation:</h4>
+                <ul>
+                    <li><strong>localhost</strong> - Si l'interface s'exécute sur le Jetson Nano</li>
+                    <li><strong>192.168.1.100</strong> - Si l'interface s'exécute sur un autre PC du réseau local</li>
+                    <li><strong>10.0.0.50</strong> - Autre exemple d'adresse IP locale</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="action-btn" onclick="saveIPConfiguration()" style="flex: 1;">
+                    <i class="fas fa-save"></i> Sauvegarder et Reconnecter
+                </button>
+                <button class="action-btn" onclick="closeIPModal()" style="flex: 1; background: var(--gray);">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js et extensions (modules ES6) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
     <!-- Configuration du serveur (charger en premier) -->
     <script src="config.js"></script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { STLLoader } from 'three/addons/loaders/STLLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    <script>
         // État global
         let currentAngles = [90, 90, 90, 90, 90, 30];
         let isConnected = false;
         let ws = null;
 
+        // Variables Three.js
+        let scene, camera, renderer, controls;
+        let robotRoot;
+        let robotOrientation;
+        let robotModel;
+        let gridHelper;
+        let axesHelper;
+        let autoRotate = false;
+
+        const MODEL_SCALE = 700;
+        const JOINT_OFFSETS = {
+            link1: { x: 0, y: 0, z: 0.06605 },
+            link2: { x: 0, y: -0.00031873, z: 0.04145 },
+            link3: { x: -0.08285, y: 0, z: 0 },
+            link4: { x: -0.08285, y: 0, z: 0 },
+            link5: { x: -0.07385, y: -0.001, z: 0 }
+        };
+        const JOINT_BASE_ROTATIONS = {
+            base: { x: 0, y: 0, z: 0 },
+            link1: { x: -0.010805, y: 0, z: 0 },
+            link2: { x: 0, y: Math.PI / 2, z: 0 },
+            link3: { x: 0, y: 0, z: 0 },
+            link4: { x: 0, y: 0, z: 0.0083081 },
+            link5: { x: 0, y: -Math.PI / 2, z: 0 }
+        };
+
+        // Segments du bras (pour animation précise)
+        let armSegments = {
+            base: null,
+            link1: null,
+            link2: null,
+            link3: null,
+            link4: null,
+            link5: null
+        };
+        let loadedSegments = 0;
+
+        function createEulerFromConfig(config) {
+            return new THREE.Euler(config?.x || 0, config?.y || 0, config?.z || 0, 'XYZ');
+        }
+
+        function setSegmentBaseRotation(mesh, name) {
+            const rotationConfig = JOINT_BASE_ROTATIONS[name] || { x: 0, y: 0, z: 0 };
+            const baseEuler = createEulerFromConfig(rotationConfig);
+            mesh.rotation.copy(baseEuler);
+            mesh.userData.baseRotation = baseEuler.clone();
+        }
+
+        function setSegmentOffset(mesh, name) {
+            const offset = JOINT_OFFSETS[name];
+            if (offset) {
+                mesh.position.set(offset.x, offset.y, offset.z);
+                mesh.userData.basePosition = new THREE.Vector3(offset.x, offset.y, offset.z);
+            } else {
+                mesh.position.set(0, 0, 0);
+                mesh.userData.basePosition = new THREE.Vector3();
+            }
+        }
+
+        function applyJointRotation(mesh, axis, angleRad) {
+            if (!mesh) {
+                return;
+            }
+            const baseRotation = mesh.userData.baseRotation || new THREE.Euler();
+            const updated = new THREE.Euler(baseRotation.x, baseRotation.y, baseRotation.z, baseRotation.order || 'XYZ');
+
+            if (axis === 'x') {
+                updated.x += angleRad;
+            } else if (axis === 'y') {
+                updated.y += angleRad;
+            } else {
+                updated.z += angleRad;
+            }
+
+            mesh.setRotationFromEuler(updated);
+        }
+
+        function orientRobotModel() {
+            if (!robotModel || !robotRoot || !robotOrientation) {
+                return;
+            }
+            robotRoot.rotation.set(0, 0, 0);
+            robotOrientation.rotation.set(0, 0, 0);
+            robotModel.rotation.set(0, 0, 0);
+            robotModel.position.set(0, 0, 0);
+            // Hypothèse déterministe : les fichiers URDF/CAD ont Z up; Three.js a Y up.
+            // Appliquer une rotation fixe -90° autour de X pour passer Z-up -> Y-up dans Three.js
+            robotOrientation.rotation.x = -Math.PI / 2;
+
+            // Mettre à jour les matrices, puis recentrer verticalement par rapport à la grille
+            robotRoot.updateMatrixWorld(true);
+            robotOrientation.updateMatrixWorld(true);
+            robotModel.updateMatrixWorld(true);
+            // Remettre la position temporairement à zéro avant calcul de bounding box
+            robotModel.position.set(0, 0, 0);
+            robotModel.updateMatrixWorld(true);
+            const bbox = new THREE.Box3().setFromObject(robotModel);
+            // Déplacer le modèle pour que la base touche y=0 (grille)
+            if (bbox && bbox.min) {
+                robotModel.position.y -= bbox.min.y;
+            }
+            robotOrientation.updateMatrixWorld(true);
+            robotModel.updateMatrixWorld(true);
+        }
+
+        function alignRobotToGrid() {
+            if (!robotModel || !robotRoot || !robotOrientation) {
+                return;
+            }
+            robotRoot.updateMatrixWorld(true);
+            robotOrientation.updateMatrixWorld(true);
+            robotModel.updateMatrixWorld(true);
+            const bbox = new THREE.Box3().setFromObject(robotModel);
+
+            if (gridHelper) {
+                gridHelper.position.y = bbox.min.y;
+            }
+
+            if (axesHelper) {
+                axesHelper.position.set(0, 0, 0);
+            }
+        }
+
+        // Fonction utilitaire pour tester plusieurs orientations et choisir celle qui pose la base sur la grille
+        function realignRobot() {
+            if (!robotModel || !robotRoot || !robotOrientation) return;
+
+            const tries = [-Math.PI / 2, Math.PI / 2, 0];
+            let best = { rot: 0, minY: Infinity };
+
+            tries.forEach(r => {
+                robotOrientation.rotation.x = r;
+                robotRoot.updateMatrixWorld(true);
+                robotOrientation.updateMatrixWorld(true);
+                robotModel.updateMatrixWorld(true);
+
+                robotModel.position.set(0, 0, 0);
+                robotModel.updateMatrixWorld(true);
+                const bbox = new THREE.Box3().setFromObject(robotModel);
+                const minY = bbox.min ? Math.abs(bbox.min.y) : Infinity;
+                console.log(`try rot=${r.toFixed(3)} -> bbox.min.y=${bbox.min ? bbox.min.y.toFixed(6) : 'n/a'}`);
+                if (minY < best.minY) {
+                    best = { rot: r, minY };
+                }
+            });
+
+            // Appliquer la meilleure rotation et aligner la base
+            robotOrientation.rotation.x = best.rot;
+            robotRoot.updateMatrixWorld(true);
+            robotOrientation.updateMatrixWorld(true);
+            robotModel.updateMatrixWorld(true);
+            robotModel.position.set(0, 0, 0);
+            robotModel.updateMatrixWorld(true);
+            const bboxFinal = new THREE.Box3().setFromObject(robotModel);
+            if (bboxFinal && bboxFinal.min) {
+                robotModel.position.y -= bboxFinal.min.y;
+            }
+            robotOrientation.updateMatrixWorld(true);
+            robotModel.updateMatrixWorld(true);
+
+            console.log('realignRobot applied: rotation.x=', robotOrientation.rotation.x, ' final bbox.min.y=', bboxFinal.min ? bboxFinal.min.y : 'n/a');
+        }
+
+        // Exposer pour tests rapides depuis la console du navigateur
+        window.realignRobot = realignRobot;
+
+        // Rendre les fonctions globales pour les boutons HTML
+        window.updateJoint = updateJoint;
+        window.adjustJoint = adjustJoint;
+        window.setJoint = setJoint;
+        window.goToPosition = goToPosition;
+        window.showSaveModal = showSaveModal;
+        window.closeSaveModal = closeSaveModal;
+        window.savePosition = savePosition;
+        window.testSequence = testSequence;
+        window.resetPositions = resetPositions;
+        window.exportConfig = exportConfig;
+        window.toggleConnection = toggleConnection;
+        window.openIPModal = openIPModal;
+        window.closeIPModal = closeIPModal;
+        window.saveIPConfiguration = saveIPConfiguration;
+        window.resetCamera = resetCamera;
+        window.toggleAutoRotate = toggleAutoRotate;
+
         // Positions prédéfinies
-        const presetPositions = {
+        let presetPositions = {
             home: [90, 90, 90, 90, 90, 30],
             observation: [90, 100, 80, 90, 90, 30],
             bin1: [135, 100, 60, 90, 90, 30],
@@ -861,10 +1423,383 @@
 
         // Initialisation
         document.addEventListener('DOMContentLoaded', function () {
-            updateVisualization();
-            addLog('✅ Interface prête à l\'emploi', 'success');
+            init3DVisualization();
+            addLog('Interface prête à l\'emploi', 'success');
         });
 
+        // Fonctions de contrôle de caméra
+        function resetCamera() {
+            camera.position.set(300, 300, 300);
+            camera.lookAt(0, 0, 0);
+            controls.reset();
+            addLog('Vue réinitialisée', 'success');
+        }
+
+        function toggleAutoRotate() {
+            autoRotate = !autoRotate;
+            if (controls) {
+                controls.autoRotate = false;
+            }
+            if (autoRotate) {
+                addLog('Rotation automatique activée', 'success');
+            } else {
+                addLog('Rotation automatique désactivée', 'success');
+            }
+        }
+
+        // Fonctions Three.js manquantes
+        function onWindowResize() {
+            const container = document.getElementById('canvas3d');
+            if (camera && renderer) {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Mise à jour des contrôles
+            if (controls) {
+                controls.update();
+            }
+
+            // Rotation automatique du modèle si activée
+            if (autoRotate && robotRoot) {
+                robotRoot.rotation.y += 0.005;
+            }
+
+            // Rendu
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            } else {
+                // Log une seule fois si le rendu ne fonctionne pas
+                if (!window.renderErrorLogged) {
+                    console.error('Rendu impossible - renderer:', !!renderer, 'scene:', !!scene, 'camera:', !!camera);
+                    window.renderErrorLogged = true;
+                }
+            }
+        }
+
+        // Initialisation de la visualisation 3D avec Three.js
+        function init3DVisualization() {
+            const container = document.getElementById('canvas3d');
+            const loadingDiv = document.getElementById('loading3d');
+
+            // Créer la scène
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x2a2a3e); // Fond gris-bleu foncé (plus clair que noir)
+            // Ajouter un brouillard léger pour la profondeur
+            scene.fog = new THREE.Fog(0x2a2a3e, 500, 2000);
+
+            // Créer la caméra
+            camera = new THREE.PerspectiveCamera(
+                45,
+                container.clientWidth / container.clientHeight,
+                0.1,
+                1000
+            );
+            // Caméra positionnée pour voir le bras assemblé
+            camera.position.set(300, 200, 300);
+            camera.lookAt(0, 100, 0); // Regarder vers le milieu du bras
+
+            // Créer le renderer
+            renderer = new THREE.WebGLRenderer({
+                canvas: container,
+                antialias: true,
+                alpha: true
+            });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Ajouter les contrôles de caméra
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 100;
+            controls.maxDistance = 800;
+            controls.target.set(0, 100, 0); // Centre sur le bras
+            controls.autoRotate = false;
+            controls.autoRotateSpeed = 2.0;
+
+            // Ajouter les lumières
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight1.position.set(200, 200, 200);
+            directionalLight1.castShadow = true;
+            scene.add(directionalLight1);
+
+            const directionalLight2 = new THREE.DirectionalLight(0xe94560, 0.3);
+            directionalLight2.position.set(-200, 100, -200);
+            scene.add(directionalLight2);
+
+            const directionalLight3 = new THREE.DirectionalLight(0x0f3460, 0.3);
+            directionalLight3.position.set(0, -200, 200);
+            scene.add(directionalLight3);
+
+            // Ajouter une grille plus visible
+            gridHelper = new THREE.GridHelper(600, 30, 0x888888, 0x444444);
+            gridHelper.position.y = 0;
+            scene.add(gridHelper);
+
+            robotRoot = new THREE.Group();
+            robotRoot.name = 'robotRoot';
+            scene.add(robotRoot);
+
+            robotOrientation = new THREE.Group();
+            robotOrientation.name = 'robotOrientation';
+            robotRoot.add(robotOrientation);
+
+            // Groupe racine du robot pour contrôler l'échelle globalement
+            robotModel = new THREE.Group();
+            robotModel.name = 'robotModel';
+            robotModel.scale.set(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+            robotOrientation.add(robotModel);
+
+            // Ajouter des axes de référence colorés (X=rouge, Y=vert, Z=bleu) attachés au robot
+            axesHelper = new THREE.AxesHelper(150);
+            robotRoot.add(axesHelper);
+
+            // Charger tous les segments du bras séparément
+            loadArmSegments(loadingDiv);
+        }
+
+        // Charger tous les segments du bras
+        function loadArmSegments(loadingDiv) {
+            const loader = new STLLoader();
+            const segments = ['base_link', 'link1', 'link2', 'link3', 'link4', 'link5'];
+            const totalSegments = segments.length;
+
+            // Matériaux pour alterner les couleurs
+            const material1 = new THREE.MeshStandardMaterial({
+                color: 0x8899aa,           // Gris bleuté clair
+                metalness: 0.7,
+                roughness: 0.3,
+                flatShading: false,
+                emissive: 0x112233,
+                emissiveIntensity: 0.1
+            });
+
+            const material2 = new THREE.MeshStandardMaterial({
+                color: 0x66aa66,           // Vert
+                metalness: 0.6,
+                roughness: 0.4,
+                flatShading: false,
+                emissive: 0x113311,
+                emissiveIntensity: 0.1
+            });
+
+            // Charger chaque segment
+            segments.forEach((segmentName, index) => {
+                loader.load(
+                    `assets/models/${segmentName}.STL`,
+                    function (geometry) {
+                        // Alterner les matériaux
+                        const material = (index % 2 === 0) ? material1 : material2;
+
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.name = segmentName;
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
+
+                        // Analyser la géométrie
+                        geometry.computeBoundingBox();
+                        const bbox = geometry.boundingBox;
+                        const size = bbox.getSize(new THREE.Vector3());
+
+                        console.log(`${segmentName} taille:`, size.x.toFixed(4), size.y.toFixed(4), size.z.toFixed(4));
+
+                        mesh.scale.set(1, 1, 1);
+                        mesh.userData.originalScale = mesh.scale.clone();
+
+                        // Stocker le segment
+                        const key = segmentName === 'base_link' ? 'base' : segmentName;
+                        armSegments[key] = mesh;
+
+                        console.log(`${segmentName} préparé, échelle: ${mesh.scale.x}`);
+                        loadedSegments++;
+
+                        // Quand tous les segments sont chargés
+                        if (loadedSegments === totalSegments) {
+                            console.log('Tous les segments chargés, assemblage...');
+                            setupArmHierarchy();
+                            loadingDiv.style.display = 'none';
+                            addLog('Modèle 3D multi-segments chargé avec succès!', 'success');
+                            addLog(`${totalSegments} segments assemblés`, 'success');
+
+                            // Afficher la hiérarchie dans la console
+                            console.log('Structure de la scène:', scene.children);
+                            console.log('Children de base:', armSegments.base ? armSegments.base.children.length : 'base null');
+
+                            // Afficher la position du bras
+                            if (armSegments.base) {
+                                console.log('Position base:', armSegments.base.position);
+                                console.log('Visible base:', armSegments.base.visible);
+                                console.log('Échelle base:', armSegments.base.scale);
+                            }
+
+                            update3DVisualization();
+                        }
+                    },
+                    function (xhr) {
+                        const percent = Math.round((xhr.loaded / xhr.total) * 100);
+                        console.log(`${segmentName}: ${percent}%`);
+                    },
+                    function (error) {
+                        console.error(`Erreur chargement ${segmentName}:`, error);
+                        addLog(`Erreur chargement ${segmentName}`, 'error');
+                    }
+                );
+            });
+
+            // Gérer le redimensionnement
+            window.addEventListener('resize', onWindowResize, false);
+
+            // Démarrer l'animation
+            animate();
+        }
+
+        // Fonction de debug pour afficher le contenu de la scène
+        function debugScene() {
+            console.log('=== DEBUG SCÈNE COMPLÈTE ===');
+            console.log('Total enfants dans scène:', scene.children.length);
+
+            function logObject(obj, indent = '') {
+                console.log(`${indent}${obj.type}: visible=${obj.visible}, children=${obj.children.length}`);
+                console.log(`${indent}  Position:`, obj.position);
+                console.log(`${indent}  Rotation:`, obj.rotation);
+                console.log(`${indent}  Échelle:`, obj.scale);
+
+                obj.children.forEach(child => {
+                    logObject(child, indent + '  ');
+                });
+            }
+
+            scene.children.forEach(child => {
+                logObject(child);
+            });
+            console.log('=== FIN DEBUG ===');
+        }
+        // Assembler la hiérarchie des segments (chaîne cinématique)
+        function setupArmHierarchy() {
+            console.log('Assemblage de la hiérarchie...');
+            console.log('Segments disponibles:', Object.keys(armSegments).filter(k => armSegments[k]));
+
+            // S'assurer que tous les segments sont visibles
+            Object.values(armSegments).forEach(segment => {
+                if (segment) {
+                    segment.visible = true;
+                }
+            });
+
+            if (!robotModel) {
+                robotModel = new THREE.Group();
+                robotModel.scale.set(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+                if (robotOrientation) {
+                    robotOrientation.add(robotModel);
+                } else if (robotRoot) {
+                    robotRoot.add(robotModel);
+                } else {
+                    scene.add(robotModel);
+                }
+            }
+
+            // Retirer toute connexion précédente avant ré-assemblage
+            Object.values(armSegments).forEach(segment => {
+                if (segment && segment.parent) {
+                    segment.parent.remove(segment);
+                }
+            });
+
+            console.log('Groupe robot prêt, préparation de l\'assemblage...');
+
+            robotModel.children.slice().forEach(child => {
+                robotModel.remove(child);
+            });
+
+            // AJOUTER LA BASE AU GROUPE EN PREMIER
+            if (armSegments.base) {
+                armSegments.base.position.set(0, 0, 0);
+                armSegments.base.scale.set(1, 1, 1);
+                setSegmentBaseRotation(armSegments.base, 'base');
+                robotModel.add(armSegments.base);
+                console.log('✓ Base ajoutée au groupe robot');
+            }
+
+            if (armSegments.base && armSegments.link1) {
+                armSegments.link1.scale.set(1, 1, 1);
+                setSegmentOffset(armSegments.link1, 'link1');
+                setSegmentBaseRotation(armSegments.link1, 'link1');
+                armSegments.base.add(armSegments.link1);
+                console.log('✓ Link1 ajouté à base');
+            }
+
+            if (armSegments.link1 && armSegments.link2) {
+                armSegments.link2.scale.set(1, 1, 1);
+                setSegmentOffset(armSegments.link2, 'link2');
+                setSegmentBaseRotation(armSegments.link2, 'link2');
+                armSegments.link1.add(armSegments.link2);
+                console.log('✓ Link2 ajouté à link1');
+            }
+
+            if (armSegments.link2 && armSegments.link3) {
+                armSegments.link3.scale.set(1, 1, 1);
+                setSegmentOffset(armSegments.link3, 'link3');
+                setSegmentBaseRotation(armSegments.link3, 'link3');
+                armSegments.link2.add(armSegments.link3);
+                console.log('✓ Link3 ajouté à link2');
+            }
+
+            if (armSegments.link3 && armSegments.link4) {
+                armSegments.link4.scale.set(1, 1, 1);
+                setSegmentOffset(armSegments.link4, 'link4');
+                setSegmentBaseRotation(armSegments.link4, 'link4');
+                armSegments.link3.add(armSegments.link4);
+                console.log('✓ Link4 ajouté à link3');
+            }
+
+            if (armSegments.link4 && armSegments.link5) {
+                setSegmentOffset(armSegments.link5, 'link5');
+                setSegmentBaseRotation(armSegments.link5, 'link5');
+                armSegments.link4.add(armSegments.link5);
+                console.log('✓ Link5 ajouté à link4');
+            }
+
+            orientRobotModel();
+            alignRobotToGrid();
+
+            // DEBUG: Vérifier la hiérarchie finale
+            console.log('=== HIÉRARCHIE FINALE ===');
+            console.log('Base dans groupe:', robotModel.children.includes(armSegments.base));
+            console.log('Base visible:', armSegments.base.visible);
+            console.log('Base children:', armSegments.base.children.length);
+
+            // Vérifier la chaîne complète
+            let current = armSegments.base;
+            let level = 0;
+            while (current && current.children.length > 0) {
+                console.log(`Niveau ${level}: ${current.children.length} enfants`);
+                current.children.forEach((child, index) => {
+                    console.log(`  Enfant ${index}: visible=${child.visible}, position=`, child.position);
+                });
+                current = current.children[0];
+                level++;
+            }
+
+            console.log('Enfants totaux dans la scène:', scene.children.length);
+            console.log('=== FIN HIÉRARCHIE ===');
+
+            // Forcer une mise à jour de la visualisation
+            update3DVisualization();
+
+            // Debug de la scène
+            debugScene();
+        }
         // Mise à jour d'un joint
         function updateJoint(jointId, value) {
             value = parseInt(value);
@@ -879,7 +1814,7 @@
                 sendCommand('move_joint', { joint: jointId, angle: value });
             }
 
-            addLog(`🎮 Joint ${jointId} ajusté à ${value}°`);
+            addLog(`Joint ${jointId} ajusté à ${value}°`);
         }
 
         // Ajustement relatif
@@ -907,11 +1842,11 @@
         function goToPosition(positionName) {
             const position = presetPositions[positionName];
             if (!position) {
-                addLog(`❌ Position ${positionName} non trouvée`, 'error');
+                addLog(`Position ${positionName} non trouvée`, 'error');
                 return;
             }
 
-            addLog(`🎯 Déplacement vers ${positionName.toUpperCase()}...`);
+            addLog(`Déplacement vers ${positionName.toUpperCase()}...`);
 
             // Animer le changement
             position.forEach((angle, index) => {
@@ -924,7 +1859,7 @@
             });
 
             setTimeout(() => {
-                addLog(`✅ Position ${positionName.toUpperCase()} atteinte`, 'success');
+                addLog(`Position ${positionName.toUpperCase()} atteinte`, 'success');
             }, 600);
         }
 
@@ -942,7 +1877,7 @@
         function savePosition(positionName) {
             presetPositions[positionName] = [...currentAngles];
 
-            addLog(`💾 Position ${positionName.toUpperCase()} sauvegardée: [${currentAngles.join(', ')}]`, 'success');
+            addLog(`Position ${positionName.toUpperCase()} sauvegardée: [${currentAngles.join(', ')}]`, 'success');
 
             // Envoyer au serveur
             if (isConnected && ws) {
@@ -967,12 +1902,12 @@
             document.getElementById('currentIPDisplay').textContent = `ws://${savedIP}:${savedPort}`;
 
             document.getElementById('ipConfigModal').style.display = 'flex';
-            addLog('⚙️ Modal de configuration ouvert', 'warning');
+            addLog('Modal de configuration ouvert', 'warning');
         }
 
         function closeIPModal() {
             document.getElementById('ipConfigModal').style.display = 'none';
-            addLog('❌ Configuration annulée', 'warning');
+            addLog('Configuration annulée', 'warning');
         }
 
         function validateIP(ip) {
@@ -997,14 +1932,14 @@
 
             // Validation de l'IP
             if (!validateIP(ip)) {
-                addLog('❌ Adresse IP invalide! Format attendu: 192.168.1.100 ou localhost', 'error');
+                addLog('Adresse IP invalide! Format attendu: 192.168.1.100 ou localhost', 'error');
                 return;
             }
 
             // Validation du port
             const portNum = parseInt(port);
             if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
-                addLog('❌ Port invalide! Doit être entre 1 et 65535', 'error');
+                addLog('Port invalide! Doit être entre 1 et 65535', 'error');
                 return;
             }
 
@@ -1012,8 +1947,8 @@
             localStorage.setItem('serverIP', ip);
             localStorage.setItem('serverPort', port);
 
-            addLog(`✅ Configuration sauvegardée: ws://${ip}:${port}`, 'success');
-            addLog('🔄 Reconnexion en cours...', 'warning');
+            addLog(`Configuration sauvegardée: ws://${ip}:${port}`, 'success');
+            addLog('Reconnexion en cours...', 'warning');
 
             closeIPModal();
 
@@ -1024,7 +1959,7 @@
                     connectToRobot();
                 }, 1000);
             } else {
-                addLog('💡 Cliquez sur "Connecter" pour tester la nouvelle configuration', 'warning');
+                addLog('Cliquez sur "Connecter" pour tester la nouvelle configuration', 'warning');
             }
         }
 
@@ -1034,9 +1969,9 @@
             const savedPort = localStorage.getItem('serverPort');
 
             if (savedIP && savedPort) {
-                addLog(`📍 Configuration chargée: ws://${savedIP}:${savedPort}`, 'success');
+                addLog(`Configuration chargée: ws://${savedIP}:${savedPort}`, 'success');
             } else {
-                addLog('💡 Utilisez ⚙️ Configuration IP pour définir l\'adresse du serveur', 'warning');
+                addLog('Utilisez Configuration IP pour définir l\'adresse du serveur', 'warning');
             }
         });
 
@@ -1044,7 +1979,7 @@
 
         // Test de séquence
         async function testSequence() {
-            addLog('🧪 Début du test de séquence...', 'warning');
+            addLog('Début du test de séquence...', 'warning');
 
             const sequence = ['home', 'observation', 'bin1', 'bin2', 'bin3', 'home'];
 
@@ -1053,14 +1988,14 @@
                 await sleep(2000);
             }
 
-            addLog('✅ Test de séquence terminé!', 'success');
+            addLog('Test de séquence terminé!', 'success');
         }
 
         // Réinitialiser
         function resetPositions() {
             if (confirm('Réinitialiser toutes les positions aux valeurs par défaut?')) {
                 goToPosition('home');
-                addLog('🔄 Positions réinitialisées', 'warning');
+                addLog('Positions réinitialisées', 'warning');
             }
         }
 
@@ -1080,7 +2015,7 @@
             a.download = `dofbot_calibration_${Date.now()}.json`;
             a.click();
 
-            addLog('📥 Configuration exportée', 'success');
+            addLog('Configuration exportée', 'success');
         }
 
         // Mise à jour de la visualisation
@@ -1103,48 +2038,48 @@
             document.getElementById('coord-y').textContent = y;
             document.getElementById('coord-z').textContent = z;
 
-            // Mise à jour visuelle du bras (simplifié)
-            updateArmVisualization(j1, j2, j3);
+            // Mise à jour visuelle du bras 3D
+            update3DVisualization();
         }
 
-        // Mise à jour visuelle du bras SVG
-        function updateArmVisualization(j1, j2, j3) {
-            const baseX = 150, baseY = 270;
-            const L1 = 70, L2 = 50, L3 = 30;
+        // Mise à jour visuelle du bras 3D avec segments séparés
+        function update3DVisualization() {
+            if (!armSegments.base || loadedSegments < 6) {
+                console.log('Segments pas encore prêts:', { base: !!armSegments.base, loaded: loadedSegments });
+                return;
+            }
 
-            // Joint 2 (shoulder)
-            const rad2 = (180 - j2) * Math.PI / 180;
-            const x2 = baseX + L1 * Math.sin(rad2);
-            const y2 = baseY - L1 * Math.cos(rad2);
+            const [j1, j2, j3, j4, j5, j6] = currentAngles;
+            console.log('Mise à jour visuelle avec angles:', currentAngles);
 
-            // Joint 3 (elbow)
-            const rad3 = rad2 + (180 - j3) * Math.PI / 180;
-            const x3 = x2 + L2 * Math.sin(rad3);
-            const y3 = y2 - L2 * Math.cos(rad3);
+            // Convertir les angles en radians
+            // Joint 1: Rotation de la base sur l'axe vertical
+            applyJointRotation(armSegments.base, 'y', THREE.MathUtils.degToRad(j1 - 90));
 
-            // Gripper
-            const x4 = x3 + L3 * Math.sin(rad3);
-            const y4 = y3 - L3 * Math.cos(rad3);
+            // Joint 2: Rotation du shoulder autour de son axe local
+            applyJointRotation(armSegments.link1, 'z', THREE.MathUtils.degToRad(j2 - 90));
 
-            // Mettre à jour les lignes SVG
-            document.getElementById('arm1').setAttribute('x2', x2);
-            document.getElementById('arm1').setAttribute('y2', y2);
+            // Joint 3: Rotation du coude
+            applyJointRotation(armSegments.link2, 'z', THREE.MathUtils.degToRad(j3 - 90));
 
-            document.getElementById('arm2').setAttribute('x1', x2);
-            document.getElementById('arm2').setAttribute('y1', y2);
-            document.getElementById('arm2').setAttribute('x2', x3);
-            document.getElementById('arm2').setAttribute('y2', y3);
+            // Joint 4: Rotation du poignet
+            applyJointRotation(armSegments.link3, 'z', THREE.MathUtils.degToRad(j4 - 90));
 
-            document.getElementById('arm3').setAttribute('x1', x3);
-            document.getElementById('arm3').setAttribute('y1', y3);
-            document.getElementById('arm3').setAttribute('x2', x4);
-            document.getElementById('arm3').setAttribute('y2', y4);
+            // Joint 5: Rotation du roll
+            applyJointRotation(armSegments.link4, 'z', THREE.MathUtils.degToRad(j5 - 90));
 
-            // Gripper
-            const gripperAngle = (currentAngles[5] - 30) / 150 * 20;
-            document.getElementById('gripper').setAttribute('x', x4 - 5);
-            document.getElementById('gripper').setAttribute('y', y4 - 10);
-            document.getElementById('gripper').setAttribute('height', 20 - gripperAngle);
+            // Joint 6: Gripper (animation visuelle)
+            if (armSegments.link5) {
+                // Simuler l'ouverture/fermeture de la pince avec une variation d'échelle
+                const openRatio = j6 / 180;
+                const gripScale = 0.8 + (openRatio * 0.4);
+                const baseScale = armSegments.link5.userData.originalScale || new THREE.Vector3(1, 1, 1);
+                armSegments.link5.scale.set(
+                    baseScale.x * gripScale,
+                    baseScale.y * gripScale,
+                    baseScale.z * gripScale
+                );
+            }
         }
 
         // Connexion WebSocket
@@ -1170,7 +2105,7 @@
 
             const wsUrl = `ws://${serverIP}:${serverPort}`;
 
-            addLog('🔌 Tentative de connexion à ' + wsUrl + '...', 'warning');
+            addLog('Tentative de connexion à ' + wsUrl + '...', 'warning');
 
             try {
                 ws = new WebSocket(wsUrl);
@@ -1179,8 +2114,9 @@
                     isConnected = true;
                     document.getElementById('statusDot').className = 'status-dot connected';
                     document.getElementById('statusText').textContent = 'Connecté';
-                    document.getElementById('connectBtn').textContent = '🔌 Déconnecter';
-                    addLog('✅ Connexion établie!', 'success');
+                    document.getElementById('connectBtn').className = 'connect-btn';
+                    document.getElementById('connectBtn').innerHTML = '<i class="fas fa-plug"></i> Déconnecter';
+                    addLog('Connexion établie!', 'success');
 
                     // Demander le statut et les positions au serveur
                     sendCommand('get_status', {});
@@ -1193,7 +2129,7 @@
                 };
 
                 ws.onerror = function (error) {
-                    addLog('❌ Erreur de connexion', 'error');
+                    addLog('Erreur de connexion', 'error');
                     isConnected = false;
                 };
 
@@ -1201,11 +2137,12 @@
                     isConnected = false;
                     document.getElementById('statusDot').className = 'status-dot simulation';
                     document.getElementById('statusText').textContent = 'Mode Simulation';
-                    document.getElementById('connectBtn').textContent = '🔌 Connecter';
-                    addLog('⚠️ Connexion fermée', 'warning');
+                    document.getElementById('connectBtn').className = 'connect-btn disconnected';
+                    document.getElementById('connectBtn').innerHTML = '<i class="fas fa-plug"></i> Connecter';
+                    addLog('Connexion fermée', 'warning');
                 };
             } catch (error) {
-                addLog('❌ Impossible de se connecter: ' + error.message, 'error');
+                addLog('Impossible de se connecter: ' + error.message, 'error');
             }
         }
 
@@ -1245,7 +2182,7 @@
                 // Mise à jour des positions sauvegardées
                 if (data.data) {
                     presetPositions = data.data;
-                    addLog('✅ Positions chargées depuis le serveur', 'success');
+                    addLog('Positions chargées depuis le serveur', 'success');
                 }
             }
         }
@@ -1257,7 +2194,7 @@
             for (let i = 0; i < 6; i++) {
                 const jointId = i + 1;
                 const slider = document.getElementById(`joint${jointId}`);
-                const display = document.getElementById(`angle${jointId}`);
+                const display = document.getElementById(`joint${jointId}-value`);
 
                 if (slider && display) {
                     slider.value = angles[i];
@@ -1266,7 +2203,7 @@
             }
 
             // Mettre à jour la visualisation
-            updateArmVisualization();
+            update3DVisualization();
         }
 
         // Ajouter une entrée au log
@@ -1295,7 +2232,7 @@
             // Touches 1-6 pour sélectionner les joints
             if (e.key >= '1' && e.key <= '6') {
                 const jointId = parseInt(e.key);
-                addLog(`⌨️ Joint ${jointId} sélectionné`);
+                addLog(`Joint ${jointId} sélectionné`);
             }
 
             // H pour HOME
@@ -1314,45 +2251,6 @@
             }
         });
     </script>
-
-    <!-- Modal de configuration IP -->
-    <div class="modal" id="ipConfigModal" style="display: none;">
-        <div class="modal-content">
-            <h2>⚙️ Configuration Serveur</h2>
-
-            <div class="ip-info">
-                <strong>📍 Connexion actuelle:</strong>
-                <div id="currentIPDisplay"
-                    style="font-family: 'Courier New', monospace; font-size: 1.2em; margin-top: 10px;">
-                    Non configuré
-                </div>
-            </div>
-
-            <label for="serverIPInput"><strong>🌐 Adresse IP du Jetson Nano:</strong></label>
-            <input type="text" id="serverIPInput" class="ip-input" placeholder="192.168.1.100 ou localhost" />
-
-            <label for="serverPortInput"><strong>🔌 Port:</strong></label>
-            <input type="number" id="serverPortInput" class="ip-input" value="8765" />
-
-            <div class="ip-examples">
-                <h4>💡 Exemples d'utilisation:</h4>
-                <ul>
-                    <li><strong>localhost</strong> - Si l'interface s'exécute sur le Jetson Nano</li>
-                    <li><strong>192.168.1.100</strong> - Si l'interface s'exécute sur un autre PC du réseau local</li>
-                    <li><strong>10.0.0.50</strong> - Autre exemple d'adresse IP locale</li>
-                </ul>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="action-btn" onclick="saveIPConfiguration()" style="flex: 1;">
-                    💾 Sauvegarder et Reconnecter
-                </button>
-                <button class="action-btn" onclick="closeIPModal()" style="flex: 1; background: #6c757d;">
-                    ❌ Annuler
-                </button>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
