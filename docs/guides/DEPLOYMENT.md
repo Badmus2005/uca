@@ -1,390 +1,142 @@
 # 🚀 Guide de Déploiement
 
-**Ucaotech DOFbot TRC2025 - Déploiement Jetson Nano Orin**
+**Ucaotech DOFbot TRC2025 - Déploiement Application**
 
 ---
 
 ## 📋 Table des Matières
 
 1. [Prérequis](#prérequis)
-2. [Préparation Jetson Nano](#préparation-jetson-nano)
-3. [Installation Système](#installation-système)
-4. [Configuration Réseau](#configuration-réseau)
-5. [Installation Dépendances](#installation-dépendances)
-6. [Déploiement Application](#déploiement-application)
-7. [Optimisation Performance](#optimisation-performance)
-8. [Tests Validation](#tests-validation)
-9. [Maintenance](#maintenance)
-10. [Dépannage](#dépannage)
+2. [Vérification Système](#vérification-système)
+3. [Déploiement Application](#déploiement-application)
+4. [Configuration](#configuration)
+5. [Optimisation Performance](#optimisation-performance)
+6. [Tests Validation](#tests-validation)
+7. [Maintenance](#maintenance)
+8. [Dépannage](#dépannage)
 
 ---
 
 ## 📦 Prérequis
 
-### Matériel Requis
+### Matériel
 
-- ✅ **Jetson Nano Orin** (8GB RAM recommandé)
-- ✅ **Carte microSD** (64GB minimum, Classe 10/U3)
-- ✅ **Alimentation** 5V/4A USB-C
-- ✅ **Yahboom DOFbot** 6-axis
+- ✅ **Yahboom DOFbot Kit** (avec Jetson Nano pré-installé)
 - ✅ **Intel RealSense D435** (ou compatible)
-- ✅ **Câble Ethernet** (configuration initiale)
-- ✅ **Routeur WiFi** (déploiement final)
+- ✅ **Connexion Internet** (WiFi ou Ethernet)
+- ✅ **Ordinateur PC** pour accéder à l'interface web
 
-### Logiciels Requis
+### Le DOFbot Yahboom Inclut Déjà
 
-- **JetPack** 5.1.2+ (Ubuntu 20.04)
-- **ROS Noetic**
-- **Python** 3.8+
-- **CUDA** 11.4+
-- **cuDNN** 8.6+
+Le kit DOFbot est livré pré-configuré avec :
+- ✅ Jetson Nano avec JetPack
+- ✅ ROS Noetic installé
+- ✅ Python et bibliothèques de base
+- ✅ SDK DOFbot (Arm_Lib)
+- ✅ Pilotes série et GPIO
 
----
-
-## 🖥️ Préparation Jetson Nano
-
-### 1. Téléchargement JetPack
-
-```bash
-# Sur ordinateur hôte
-# Télécharger JetPack depuis:
-# https://developer.nvidia.com/embedded/jetpack
-
-# Ou via NVIDIA SDK Manager
-sudo apt install nvidia-sdk-manager
-nvidia-sdk-manager
-```
-
-### 2. Flash Carte SD
-
-**Méthode 1: Etcher (Simple)**
-```bash
-# Télécharger Etcher: https://www.balena.io/etcher/
-# 1. Insérer carte SD
-# 2. Sélectionner image JetPack
-# 3. Sélectionner carte SD
-# 4. Flash!
-```
-
-**Méthode 2: dd (Avancé)**
-```bash
-# Identifier carte SD
-lsblk
-
-# Flash image (⚠️ ATTENTION à /dev/sdX)
-sudo dd if=jetpack-image.img of=/dev/sdX bs=4M status=progress
-sudo sync
-```
-
-### 3. Premier Démarrage
-
-1. **Insérer carte SD** dans Jetson Nano
-2. **Connecter**:
-   - Écran HDMI
-   - Clavier USB
-   - Souris USB
-   - Ethernet
-   - Alimentation
-3. **Démarrer** et suivre assistant configuration
-
-**Configuration initiale**:
-```
-Nom: ucaotech
-Utilisateur: ucaotech
-Mot de passe: [votre_mot_de_passe_sécurisé]
-Hostname: ucaotech-dofbot
-Timezone: Africa/Casablanca
-```
+**Vous n'avez PAS besoin de réinstaller le système !**
 
 ---
 
-## ⚙️ Installation Système
+## 🔍 Vérification Système
 
-### 1. Mise à Jour Système
+### 1. Premier Démarrage du DOFbot
 
 ```bash
-# Mise à jour packages
-sudo apt update
-sudo apt upgrade -y
+# Allumer le DOFbot
+# Connexion SSH ou écran direct
 
-# Installation outils de base
-sudo apt install -y \
-    build-essential \
-    cmake \
-    git \
-    wget \
-    curl \
-    vim \
-    htop \
-    net-tools \
-    python3-pip \
-    python3-dev
+# Vérifier la version du système
+cat /etc/nv_tegra_release
+python3 --version
 ```
 
-### 2. Configuration Swap (Important!)
+### 2. Vérifier ROS
 
 ```bash
-# Créer fichier swap 8GB
-sudo fallocate -l 8G /swapfile
-sudo chmod 600 /swapfile
-sudo mkswap /swapfile
-sudo swapon /swapfile
-
-# Rendre permanent
-echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-
-# Vérifier
-free -h
-```
-
-### 3. Installation CUDA (si non inclus)
-
-```bash
-# Vérifier CUDA
-nvcc --version
-
-# Si absent, installer via JetPack
-# Ou manuellement:
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/arm64/cuda-ubuntu2004.pin
-sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/arm64/7fa2af80.pub
-sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/arm64/ /"
-sudo apt update
-sudo apt install -y cuda-toolkit-11-4
-```
-
-### 4. Variables d'Environnement
-
-```bash
-# Ajouter à ~/.bashrc
-cat >> ~/.bashrc << 'EOF'
-
-# CUDA
-export PATH=/usr/local/cuda/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-
-# ROS
+# Source ROS
 source /opt/ros/noetic/setup.bash
-source ~/ucaotech_ws/devel/setup.bash
 
-# Python
-export PYTHONPATH=$PYTHONPATH:~/ucaotech_ws/src/ucaotech_dofbot_trc2025/scripts
-export PYTHONPATH=$PYTHONPATH:~/ucaotech_ws/src/ucaotech_dofbot_trc2025/src
+# Vérifier ROS fonctionne
+roscore &
+sleep 2
+rostopic list
+pkill roscore
+```
 
-# Performance
-export TF_CPP_MIN_LOG_LEVEL=2
-export CUDA_VISIBLE_DEVICES=0
+### 3. Vérifier DOFbot SDK
+
+```bash
+# Test rapide du bras
+python3 << EOF
+try:
+    from Arm_Lib import Arm_Device
+    print("✅ Arm_Lib disponible")
+    arm = Arm_Device()
+    print("✅ Connexion bras OK")
+except Exception as e:
+    print(f"❌ Erreur: {e}")
 EOF
-
-# Appliquer
-source ~/.bashrc
 ```
 
----
-
-## 🌐 Configuration Réseau
-
-### 1. Configuration WiFi
+### 4. Vérifier Connexion Internet
 
 ```bash
-# Lister réseaux disponibles
-nmcli device wifi list
-
-# Connexion réseau
-sudo nmcli device wifi connect "NOM_RESEAU" password "MOT_DE_PASSE"
-
-# Vérifier connexion
-ip addr show wlan0
+# Tester connexion
 ping -c 4 google.com
-```
 
-### 2. IP Statique (Recommandé)
-
-**Méthode 1: NetworkManager**
-```bash
-# Configuration IP statique
-sudo nmcli connection modify "NOM_CONNEXION" \
-    ipv4.addresses 192.168.1.100/24 \
-    ipv4.gateway 192.168.1.1 \
-    ipv4.dns "8.8.8.8 8.8.4.4" \
-    ipv4.method manual
-
-# Redémarrer connexion
-sudo nmcli connection down "NOM_CONNEXION"
-sudo nmcli connection up "NOM_CONNEXION"
-```
-
-**Méthode 2: Fichier netplan**
-```bash
-# Éditer configuration
-sudo nano /etc/netplan/01-network-manager-all.yaml
-```
-
-```yaml
-network:
-  version: 2
-  renderer: NetworkManager
-  ethernets:
-    eth0:
-      dhcp4: no
-      addresses: [192.168.1.100/24]
-      gateway4: 192.168.1.1
-      nameservers:
-        addresses: [8.8.8.8, 8.8.4.4]
-  wifis:
-    wlan0:
-      dhcp4: no
-      addresses: [192.168.1.101/24]
-      gateway4: 192.168.1.1
-      nameservers:
-        addresses: [8.8.8.8, 8.8.4.4]
-      access-points:
-        "NOM_RESEAU":
-          password: "MOT_DE_PASSE"
-```
-
-```bash
-# Appliquer
-sudo netplan apply
-```
-
-### 3. Hostname et Découverte
-
-```bash
-# Configurer hostname
-sudo hostnamectl set-hostname ucaotech-dofbot
-
-# Éditer /etc/hosts
-sudo nano /etc/hosts
-# Ajouter:
-# 127.0.0.1    ucaotech-dofbot
-
-# Installer avahi (mDNS)
-sudo apt install -y avahi-daemon avahi-utils
-
-# Test découverte
-avahi-browse -a
-```
-
----
-
-## 📚 Installation Dépendances
-
-### 1. Installation ROS Noetic
-
-```bash
-# Configuration sources ROS
-sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list'
-
-# Clé GPG
-sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-
-# Installation
-sudo apt update
-sudo apt install -y ros-noetic-desktop-full
-
-# Dépendances ROS
-sudo apt install -y \
-    python3-rosdep \
-    python3-rosinstall \
-    python3-rosinstall-generator \
-    python3-wstool \
-    build-essential
-
-# Initialiser rosdep
-sudo rosdep init
-rosdep update
-```
-
-### 2. Packages ROS Additionnels
-
-```bash
-# Packages courants
-sudo apt install -y \
-    ros-noetic-cv-bridge \
-    ros-noetic-image-transport \
-    ros-noetic-camera-info-manager \
-    ros-noetic-realsense2-camera \
-    ros-noetic-tf2 \
-    ros-noetic-tf2-ros \
-    ros-noetic-actionlib \
-    ros-noetic-control-msgs \
-    ros-noetic-trajectory-msgs
-```
-
-### 3. Installation Python Packages
-
-```bash
-# Mise à jour pip
-python3 -m pip install --upgrade pip
-
-# Packages essentiels
-pip3 install \
-    numpy==1.24.3 \
-    opencv-python==4.8.0.74 \
-    opencv-contrib-python==4.8.0.74 \
-    pyrealsense2==2.54.1 \
-    ultralytics==8.0.196 \
-    torch==2.0.0 \
-    torchvision==0.15.1 \
-    rospkg \
-    catkin_pkg
-
-# Packages ML/Vision
-pip3 install \
-    mediapipe==0.10.3 \
-    scikit-learn==1.3.0 \
-    scipy==1.11.2 \
-    matplotlib==3.7.2 \
-    pillow==10.0.0
-
-# Packages utilitaires
-pip3 install \
-    pyyaml==6.0.1 \
-    websockets==12.0 \
-    asyncio \
-    pyserial==3.5
-```
-
-### 4. Installation Intel RealSense SDK
-
-```bash
-# Ajouter dépôt
-sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
-sudo add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main"
-
-# Installation
-sudo apt update
-sudo apt install -y \
-    librealsense2-dkms \
-    librealsense2-utils \
-    librealsense2-dev \
-    librealsense2-dbg
-
-# Vérifier
-realsense-viewer
-```
-
-### 5. Installation DOFbot SDK
-
-```bash
-# Cloner SDK Yahboom
-cd ~/
-git clone https://github.com/YahboomTechnology/Dofbot-Jetson-Nano.git
-
-# Copier bibliothèque
-sudo cp Dofbot-Jetson-Nano/Arm_Lib/Arm_Lib.py /usr/local/lib/python3.8/dist-packages/
-
-# Configurer permissions série
-sudo usermod -a -G dialout $USER
-# Déconnexion/reconnexion nécessaire
+# Obtenir l'IP du Jetson
+hostname -I
+# Notez cette IP pour l'interface web !
 ```
 
 ---
 
 ## 🚀 Déploiement Application
 
-### 1. Création Workspace ROS
+### 1. Mise à Jour Système (Recommandé)
+
+```bash
+# Sur le Jetson Nano
+sudo apt update
+sudo apt upgrade -y
+```
+
+### 2. Installation Dépendances Additionnelles
+
+Le DOFbot inclut déjà la plupart des dépendances, mais certains packages sont nécessaires pour l'application TRC2025 :
+
+```bash
+# Packages Python pour vision et ML
+pip3 install \
+    ultralytics==8.0.196 \
+    mediapipe==0.10.3 \
+    websockets==12.0 \
+    pyyaml==6.0.1
+
+# Packages ROS additionnels (si nécessaire)
+sudo apt install -y \
+    ros-noetic-cv-bridge \
+    ros-noetic-realsense2-camera
+```
+
+### 3. Installation Intel RealSense SDK
+
+```bash
+# Ajouter dépôt Intel
+sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
+sudo add-apt-repository "deb https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main"
+
+# Installation
+sudo apt update
+sudo apt install -y librealsense2-utils librealsense2-dev
+
+# Vérifier
+realsense-viewer
+```
+
+### 4. Création Workspace ROS
 
 ```bash
 # Créer workspace
@@ -394,11 +146,13 @@ cd ~/ucaotech_ws/
 # Initialiser
 catkin_make
 
-# Source
-source devel/setup.bash
+# Source ROS et workspace
+echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+echo "source ~/ucaotech_ws/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc
 ```
 
-### 2. Cloner Projet
+### 5. Cloner Projet TRC2025
 
 ```bash
 cd ~/ucaotech_ws/src/
@@ -406,48 +160,8 @@ cd ~/ucaotech_ws/src/
 # Cloner depuis GitHub
 git clone https://github.com/Badmus2005/uca.git ucaotech_dofbot_trc2025
 
-# Ou copier depuis USB
-cp -r /media/ucaotech/USB/ucaotech_dofbot_trc2025 .
-```
-
-### 3. Installation Dépendances Projet
-
-```bash
-cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/
-
-# Installer dépendances Python
-pip3 install -r requirements.txt
-
-# Installer dépendances ROS
-cd ~/ucaotech_ws/
-rosdep install --from-paths src --ignore-src -r -y
-```
-
-### 4. Compilation
-
-```bash
-cd ~/ucaotech_ws/
-
-# Compilation
-catkin_make
-
-# Ou avec options
-catkin_make -DCMAKE_BUILD_TYPE=Release
-
-# Source
-source devel/setup.bash
-```
-
-### 5. Téléchargement Modèles
-
-```bash
-cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/trc2025_train_models/models/
-
-# Télécharger modèle YOLO (si non inclus)
-wget https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
-
-# Ou copier modèle entraîné
-cp /path/to/yolov8n_waste.pt .
+# Ou copier depuis clé USB
+# cp -r /media/ucaotech/USB/ucaotech_dofbot_trc2025 .
 ```
 
 ### 6. Configuration Permissions
@@ -459,7 +173,95 @@ chmod +x *.py
 
 # Fichiers web
 cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/web/
-chmod 644 *.html *.css *.js
+chmod 644 *.html
+```
+
+### 7. Compilation Workspace
+
+```bash
+cd ~/ucaotech_ws/
+
+# Compilation
+catkin_make
+
+# Source pour appliquer
+source devel/setup.bash
+```
+
+### 8. Téléchargement Modèles YOLO
+
+```bash
+cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/trc2025_train_models/models/
+
+# Télécharger modèle YOLO de base (si nécessaire)
+wget https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt
+
+# Ou copier votre modèle entraîné
+# cp /path/to/yolov8n_waste.pt .
+```
+
+---
+
+## ⚙️ Configuration
+
+### 1. Configuration Réseau (Optionnel)
+
+Si vous voulez une IP fixe pour accéder facilement à l'interface web :
+
+```bash
+# Obtenir l'IP actuelle
+hostname -I
+
+# Pour IP statique (optionnel)
+sudo nmcli connection modify "NOM_CONNEXION" \
+    ipv4.addresses 192.168.1.100/24 \
+    ipv4.gateway 192.168.1.1 \
+    ipv4.dns "8.8.8.8" \
+    ipv4.method manual
+
+# Redémarrer connexion
+sudo nmcli connection down "NOM_CONNEXION"
+sudo nmcli connection up "NOM_CONNEXION"
+```
+
+### 2. Configuration Positions Prédéfinies
+
+```bash
+# Éditer fichier de configuration
+cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/config/
+nano positions.yaml
+```
+
+Exemple de configuration :
+```yaml
+home:
+  - 90
+  - 90
+  - 90
+  - 90
+  - 90
+  - 30
+observation:
+  - 90
+  - 45
+  - 90
+  - 90
+  - 90
+  - 30
+```
+
+### 3. Variables d'Environnement
+
+```bash
+# Ajouter au ~/.bashrc (si pas déjà fait)
+cat >> ~/.bashrc << 'EOF'
+
+# Workspace TRC2025
+export PYTHONPATH=$PYTHONPATH:~/ucaotech_ws/src/ucaotech_dofbot_trc2025/scripts
+export PYTHONPATH=$PYTHONPATH:~/ucaotech_ws/src/ucaotech_dofbot_trc2025/src
+EOF
+
+source ~/.bashrc
 ```
 
 ---
@@ -468,11 +270,13 @@ chmod 644 *.html *.css *.js
 
 ### 1. Mode Performance Maximale
 
+Le DOFbot peut fonctionner en différents modes de performance :
+
 ```bash
 # Vérifier modes disponibles
 sudo nvpmodel -q
 
-# Activer mode MAXN (performance max)
+# Activer mode MAXN (performance maximale)
 sudo nvpmodel -m 0
 
 # Activer tous les CPU cores
@@ -482,9 +286,16 @@ sudo jetson_clocks
 sudo jetson_clocks --show
 ```
 
-### 2. Script Auto-démarrage
+### 2. Script de Démarrage Automatique (Optionnel)
 
-**`/etc/systemd/system/ucaotech-robot.service`**
+Créer un service systemd pour lancer automatiquement le système au démarrage :
+
+**Créer `/etc/systemd/system/ucaotech-robot.service` :**
+```bash
+sudo nano /etc/systemd/system/ucaotech-robot.service
+```
+
+**Contenu du fichier :**
 ```ini
 [Unit]
 Description=Ucaotech DOFbot TRC2025
@@ -494,8 +305,6 @@ After=network.target
 Type=simple
 User=ucaotech
 WorkingDirectory=/home/ucaotech/ucaotech_ws
-ExecStartPre=/bin/bash -c 'sudo nvpmodel -m 0'
-ExecStartPre=/bin/bash -c 'sudo jetson_clocks'
 ExecStart=/bin/bash -c 'source /opt/ros/noetic/setup.bash && source /home/ucaotech/ucaotech_ws/devel/setup.bash && roslaunch ucaotech_dofbot_trc2025 full_system.launch'
 Restart=on-failure
 RestartSec=10
@@ -504,41 +313,28 @@ RestartSec=10
 WantedBy=multi-user.target
 ```
 
+**Activer le service :**
 ```bash
-# Activer service
+# Recharger systemd
+sudo systemctl daemon-reload
+
+# Activer le service
 sudo systemctl enable ucaotech-robot.service
+
+# Démarrer le service
 sudo systemctl start ucaotech-robot.service
 
-# Vérifier status
+# Vérifier le status
 sudo systemctl status ucaotech-robot.service
 ```
 
-### 3. Optimisation TensorRT
+### 3. Optimisation Mémoire
 
 ```bash
-# Export modèle en TensorRT
-cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/trc2025_train_models/
-
-python3 << EOF
-from ultralytics import YOLO
-
-# Charger modèle
-model = YOLO('models/yolov8n_waste.pt')
-
-# Export TensorRT
-model.export(format='engine', device=0, half=True)
-EOF
-
-# Fichier généré: yolov8n_waste.engine
-```
-
-### 4. Configuration Swappiness
-
-```bash
-# Réduire swappiness (performance)
+# Réduire swappiness pour meilleures performances
 sudo sysctl vm.swappiness=10
 
-# Permanent
+# Rendre permanent
 echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
 ```
 
@@ -546,182 +342,230 @@ echo 'vm.swappiness=10' | sudo tee -a /etc/sysctl.conf
 
 ## ✅ Tests Validation
 
-### 1. Test Caméra
+### 1. Test Bras DOFbot
 
 ```bash
-# Test RealSense
-realsense-viewer
-
-# Test via ROS
-roslaunch realsense2_camera rs_camera.launch
-rostopic echo /camera/color/image_raw
-```
-
-### 2. Test DOFbot
-
-```bash
-# Test connexion série
-ls -l /dev/ttyUSB* /dev/ttyTHS*
-
-# Test mouvement
-cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/scripts/
+# Test rapide de mouvement
 python3 << EOF
 from Arm_Lib import Arm_Device
+import time
+
 arm = Arm_Device()
 time.sleep(1)
-arm.Arm_serial_servo_write(1, 90, 500)
-print("Test OK!")
+
+# Test mouvement joint 1
+arm.Arm_serial_servo_write(1, 90, 1000)
+time.sleep(2)
+
+print("✅ Test bras OK!")
 EOF
 ```
 
-### 3. Test Système Complet
+### 2. Test Caméra RealSense
 
 ```bash
-# Lancer système complet
+# Lancer viewer RealSense
+realsense-viewer
+
+# Ou test via ROS
+roslaunch realsense2_camera rs_camera.launch &
+sleep 5
+rostopic echo /camera/color/image_raw --noarr
+pkill -f realsense
+```
+
+### 3. Test Interface Web de Calibration
+
+```bash
+# Lancer serveur de calibration
+cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/scripts/
+python3 calibration_server.py
+```
+
+**Sur votre PC :**
+- Ouvrir `web/calibration_interface.html` dans un navigateur
+- Configurer l'IP du Jetson (celle obtenue avec `hostname -I`)
+- Cliquer sur "Connecter"
+- Tester les sliders de joints
+
+### 4. Test Système Complet (Optionnel)
+
+```bash
+# Lancer système complet avec ROS
 roslaunch ucaotech_dofbot_trc2025 full_system.launch
 
 # Dans autre terminal, vérifier topics
 rostopic list
 rostopic hz /detected_objects
-rostopic hz /joint_states
-```
-
-### 4. Test Interface Web
-
-```bash
-# Lancer serveur calibration
-cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/scripts/
-python3 calibration_server.py
-
-# Sur ordinateur, ouvrir navigateur:
-# http://[JETSON_IP]:8765/
 ```
 
 ---
 
 ## 🔧 Maintenance
 
-### 1. Mise à Jour Système
+### 1. Mise à Jour Application
 
 ```bash
-# Mise à jour régulière
-sudo apt update
-sudo apt upgrade -y
-
-# Mise à jour projet
+# Mettre à jour depuis GitHub
 cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/
 git pull origin main
 
 # Recompilation
 cd ~/ucaotech_ws/
 catkin_make
+source devel/setup.bash
 ```
 
 ### 2. Logs et Monitoring
 
 ```bash
-# Logs ROS
-roscd ucaotech_dofbot_trc2025
-cat ~/.ros/log/latest/*.log
+# Vérifier logs du serveur de calibration
+# Les logs s'affichent dans le terminal où vous lancez le serveur
 
 # Monitoring ressources
 htop
-tegrastats
 
-# Température
+# Température Jetson
 watch -n 1 cat /sys/devices/virtual/thermal/thermal_zone*/temp
 ```
 
 ### 3. Backup Configuration
 
 ```bash
-# Backup workspace
-tar -czf ~/ucaotech_backup_$(date +%Y%m%d).tar.gz \
-    ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/
+# Backup positions et config
+tar -czf ~/backup_config_$(date +%Y%m%d).tar.gz \
+    ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/config/
 
-# Backup configuration
-cp -r ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/config/ \
-    ~/config_backup_$(date +%Y%m%d)/
+# Copier sur clé USB ou PC
+# scp ~/backup_config_*.tar.gz user@pc:/path/to/backup/
 ```
 
 ---
 
 ## 🆘 Dépannage
 
-### Problème 1: Caméra Non Détectée
+### Problème 1: Caméra RealSense Non Détectée
 
 ```bash
 # Vérifier connexion USB
 lsusb | grep Intel
 
-# Relancer driver
-sudo modprobe uvcvideo
+# Relancer les règles udev
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+# Redémarrer le Jetson si nécessaire
+```
+
+### Problème 2: Bras Ne Répond Pas
+
+```bash
+# Vérifier connexion série
+ls -l /dev/ttyUSB* /dev/ttyTHS*
 
 # Vérifier permissions
-sudo chmod 666 /dev/video*
-```
-
-### Problème 2: DOFbot Non Connecté
-
-```bash
-# Vérifier port série
-ls -l /dev/ttyUSB*
-
-# Tester permissions
 sudo chmod 666 /dev/ttyUSB0
 
-# Vérifier groupe dialout
+# Vérifier que l'utilisateur est dans le groupe dialout
 groups | grep dialout
+# Si absent:
+sudo usermod -a -G dialout $USER
+# Puis déconnexion/reconnexion
 ```
 
-### Problème 3: Performance Faible
+### Problème 3: Interface Web Ne Se Connecte Pas
+
+**Vérifier IP du Jetson :**
+```bash
+hostname -I
+```
+
+**Vérifier serveur calibration lancé :**
+```bash
+ps aux | grep calibration_server
+```
+
+**Vérifier pare-feu :**
+```bash
+sudo ufw status
+# Si actif, autoriser port 8765
+sudo ufw allow 8765
+```
+
+### Problème 4: Performance Lente
 
 ```bash
-# Vérifier mode performance
-sudo nvpmodel -q
-
-# Activer mode max
+# Activer mode performance max
 sudo nvpmodel -m 0
 sudo jetson_clocks
 
 # Vérifier température
 tegrastats
+# Si surchauffe > 80°C, améliorer ventilation
 ```
 
-### Problème 4: Erreur CUDA
+### Problème 5: "Arm_Lib not found"
 
 ```bash
-# Vérifier CUDA
-nvcc --version
-nvidia-smi
+# Vérifier installation SDK DOFbot
+python3 -c "from Arm_Lib import Arm_Device; print('OK')"
 
-# Vérifier variables
-echo $CUDA_HOME
-echo $LD_LIBRARY_PATH
+# Si erreur, le SDK Yahboom devrait être pré-installé sur le DOFbot
+# Contacter support Yahboom si nécessaire
 ```
 
 ---
 
 ## 📚 Checklist Déploiement
 
-- [ ] Flash JetPack sur carte SD
-- [ ] Configuration initiale Jetson
-- [ ] Mise à jour système
-- [ ] Configuration swap
-- [ ] Installation CUDA/cuDNN
-- [ ] Configuration réseau (WiFi + IP statique)
-- [ ] Installation ROS Noetic
-- [ ] Installation dépendances Python
-- [ ] Installation RealSense SDK
-- [ ] Installation DOFbot SDK
-- [ ] Clonage projet
-- [ ] Compilation workspace
-- [ ] Téléchargement modèles
-- [ ] Configuration permissions
-- [ ] Activation mode performance
-- [ ] Configuration auto-démarrage
-- [ ] Tests validation
-- [ ] Backup configuration
+### Vérification Système DOFbot
+- [ ] DOFbot allumé et fonctionnel
+- [ ] ROS Noetic pré-installé vérifié
+- [ ] SDK Arm_Lib disponible
+- [ ] Connexion Internet active
+
+### Installation Application
+- [ ] Workspace ROS créé
+- [ ] Projet TRC2025 cloné
+- [ ] Dépendances Python installées
+- [ ] RealSense SDK installé
+- [ ] Compilation workspace réussie
+- [ ] Permissions configurées
+
+### Configuration
+- [ ] IP Jetson notée (pour interface web)
+- [ ] Positions prédéfinies configurées
+- [ ] Variables d'environnement ajoutées
+
+### Tests
+- [ ] Bras DOFbot répond aux commandes
+- [ ] Caméra RealSense détectée
+- [ ] Interface web de calibration accessible
+- [ ] Connexion PC ↔ Jetson fonctionnelle
+
+### Optimisation (Optionnel)
+- [ ] Mode performance activé
+- [ ] Service auto-démarrage configuré
+- [ ] Backup configuration effectué
+
+---
+
+## 🎯 Démarrage Rapide Post-Installation
+
+Une fois le déploiement terminé, voici comment utiliser le système :
+
+### Lancer l'Interface de Calibration
+
+**Sur le Jetson Nano :**
+```bash
+cd ~/ucaotech_ws/src/ucaotech_dofbot_trc2025/scripts/
+python3 calibration_server.py
+```
+
+**Sur votre PC :**
+1. Ouvrir `web/calibration_interface.html`
+2. Configurer IP du Jetson
+3. Connecter et calibrer !
 
 ---
 
@@ -729,4 +573,4 @@ echo $LD_LIBRARY_PATH
 
 Pour aide déploiement : voir [docs/INDEX.md](../INDEX.md)
 
-**Dernière mise à jour : 16 octobre 2025**
+**Dernière mise à jour : 22 octobre 2025**

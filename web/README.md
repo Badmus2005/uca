@@ -35,9 +35,9 @@ python3 calibration_server.py
 
 ### Étape 2 : Ouvrir l'Interface
 
-**Double-cliquer sur :**
+**lancez le serveur local si vous etes sur votre ordinateur :**
 ```
-D:\TRC2025\docTel\TRC_Doc\TRC\ucaotech_dofbot_trc2025\web\calibration_interface.html
+cd D:\TRC2025\docTel\TRC_Doc\TRC\ucaotech_dofbot_trc2025\web; python -m http.server 8080
 ```
 
 ### Étape 3 : Configurer l'IP
