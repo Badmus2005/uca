@@ -873,8 +873,10 @@
         <!-- Header -->
         <div class="header">
             <div class="logos">
-                <div class="logo-placeholder">LOGO TRC</div>
-                <div class="logo-placeholder">LOGO UCAO-TECH</div>
+                <img src="assets/logos/logo_trc.png" alt="Logo TRC" class="logo-image"
+                    onerror="this.style.display='none'">
+                <img src="assets/logos/logo_ucaotech.png" alt="Logo UCAO-TECH" class="logo-image"
+                    onerror="this.style.display='none'">
             </div>
             <h1><i class="fas fa-robot"></i> Calibration DOFBOT JETSON NANO SUB</h1>
             <div class="subtitle">TRC 2025 | UCAO-TECH</div>
@@ -896,7 +898,7 @@
             </div>
         </div>
 
-        <!-- Main Content - NOUVELLE DISPOSITION -->
+        <!-- Main Content -->
         <div class="main-content">
             <!-- Colonne de gauche - Contrôles -->
             <div class="left-column">
@@ -912,12 +914,12 @@
                                 <span class="joint-value" id="joint1-value">90°</span>
                             </div>
                             <div class="slider-container">
-                                <input type="range" min="0" max="180" value="90" class="slider" id="joint1"
+                                <input type="range" min="0" max="270" value="90" class="slider" id="joint1"
                                     oninput="updateJoint(1, this.value)">
                             </div>
                             <div class="limits">
                                 <span>0°</span>
-                                <span>180°</span>
+                                <span>270°</span>
                             </div>
                             <div class="quick-adjust">
                                 <button class="quick-btn" onclick="adjustJoint(1, -10)">-10°</button>
@@ -1088,14 +1090,15 @@
                 <button class="preset-btn observation" onclick="goToPosition('observation')">
                     <i class="fas fa-eye"></i> OBSERVATION
                 </button>
-                <button class="preset-btn bin1" onclick="goToPosition('bin1')">
-                    <i class="fas fa-trash"></i> BAC 1
+                <!-- PAR CE BLOC -->
+                <button class="preset-btn bin1" onclick="goToPosition('dangereux')">
+                    <i class="fas fa-trash"></i> BAC 1 (Dangereux)
                 </button>
-                <button class="preset-btn bin2" onclick="goToPosition('bin2')">
-                    <i class="fas fa-trash"></i> BAC 2
+                <button class="preset-btn bin2" onclick="goToPosition('menagers')">
+                    <i class="fas fa-trash"></i> BAC 2 (Ménagers)
                 </button>
-                <button class="preset-btn bin3" onclick="goToPosition('bin3')">
-                    <i class="fas fa-trash"></i> BAC 3
+                <button class="preset-btn bin3" onclick="goToPosition('recyclables')">
+                    <i class="fas fa-trash"></i> BAC 3 (Recyclables)
                 </button>
             </div>
 
@@ -1151,13 +1154,13 @@
                     <i class="fas fa-eye"></i> OBSERVATION
                 </button>
                 <button class="preset-btn bin1" onclick="savePosition('dangereux')">
-                    <i class="fas fa-trash"></i> BAC 1
+                    <i class="fas fa-trash"></i> BAC 1 (Dangereux)
                 </button>
                 <button class="preset-btn bin2" onclick="savePosition('menagers')">
-                    <i class="fas fa-trash"></i> BAC 2
+                    <i class="fas fa-trash"></i> BAC 2 (Ménagers)
                 </button>
                 <button class="preset-btn bin3" onclick="savePosition('recyclables')">
-                    <i class="fas fa-trash"></i> BAC 3
+                    <i class="fas fa-trash"></i> BAC 3 (Recyclables)
                 </button>
             </div>
             <div class="modal-buttons">
@@ -1416,9 +1419,9 @@
         let presetPositions = {
             home: [90, 90, 90, 90, 90, 30],
             observation: [90, 100, 80, 90, 90, 30],
-            bin1: [135, 100, 60, 90, 90, 30],
-            bin2: [90, 100, 60, 90, 90, 30],
-            bin3: [45, 100, 60, 90, 90, 30]
+            dangereux: [135, 100, 60, 90, 90, 30],
+            menagers: [90, 100, 60, 90, 90, 30],
+            recyclables: [45, 100, 60, 90, 90, 30]
         };
 
         // Initialisation
@@ -1838,11 +1841,91 @@
             updateJoint(jointId, value);
         }
 
-        // Aller à une position prédéfinie
+
+        function convertBackendPositions(backendData) {
+            const positions = {};
+
+            if (backendData.home) {
+                positions.home = [
+                    backendData.home.joint1 || 90,
+                    backendData.home.joint2 || 90,
+                    backendData.home.joint3 || 90,
+                    backendData.home.joint4 || 90,
+                    backendData.home.joint5 || 90,
+                    backendData.home.gripper || 30
+                ];
+            }
+
+            if (backendData.observation) {
+                positions.observation = [
+                    backendData.observation.joint1 || 90,
+                    backendData.observation.joint2 || 100,
+                    backendData.observation.joint3 || 80,
+                    backendData.observation.joint4 || 90,
+                    backendData.observation.joint5 || 90,
+                    backendData.observation.gripper || 30
+                ];
+            }
+
+            if (backendData.bins) {
+                if (backendData.bins.dangereux) {
+                    positions.dangereux = [
+                        backendData.bins.dangereux.joint1 || 135,
+                        backendData.bins.dangereux.joint2 || 100,
+                        backendData.bins.dangereux.joint3 || 60,
+                        backendData.bins.dangereux.joint4 || 90,
+                        backendData.bins.dangereux.joint5 || 90,
+                        backendData.bins.dangereux.gripper || 30
+                    ];
+                }
+
+                if (backendData.bins.menagers) {
+                    positions.menagers = [
+                        backendData.bins.menagers.joint1 || 90,
+                        backendData.bins.menagers.joint2 || 100,
+                        backendData.bins.menagers.joint3 || 60,
+                        backendData.bins.menagers.joint4 || 90,
+                        backendData.bins.menagers.joint5 || 90,
+                        backendData.bins.menagers.gripper || 30
+                    ];
+                }
+
+                if (backendData.bins.recyclables) {
+                    positions.recyclables = [
+                        backendData.bins.recyclables.joint1 || 45,
+                        backendData.bins.recyclables.joint2 || 100,
+                        backendData.bins.recyclables.joint3 || 60,
+                        backendData.bins.recyclables.joint4 || 90,
+                        backendData.bins.recyclables.joint5 || 90,
+                        backendData.bins.recyclables.gripper || 30
+                    ];
+                }
+            }
+
+            return positions;
+        }
+
+        // Mapping entre noms frontend et backend
+        const positionMapping = {
+            'bin1': 'dangereux',
+            'bin2': 'menagers',
+            'bin3': 'recyclables',
+            'dangereux': 'dangereux',
+            'menagers': 'menagers',
+            'recyclables': 'recyclables',
+            'home': 'home',
+            'observation': 'observation'
+        };
+
         function goToPosition(positionName) {
-            const position = presetPositions[positionName];
+            // Utiliser le mapping pour obtenir le nom correct
+            const backendName = positionMapping[positionName] || positionName;
+
+            console.log("Recherche position:", backendName, "dans:", Object.keys(presetPositions));
+
+            const position = presetPositions[backendName];
             if (!position) {
-                addLog(`Position ${positionName} non trouvée`, 'error');
+                addLog(`Position ${positionName} (${backendName}) non trouvée`, 'error');
                 return;
             }
 
@@ -1853,8 +1936,10 @@
                 setTimeout(() => {
                     const jointId = index + 1;
                     const slider = document.getElementById(`joint${jointId}`);
-                    slider.value = angle;
-                    updateJoint(jointId, angle);
+                    if (slider) {
+                        slider.value = angle;
+                        updateJoint(jointId, angle);
+                    }
                 }, index * 100);
             });
 
@@ -2181,8 +2266,9 @@
             } else if (data.type === 'positions') {
                 // Mise à jour des positions sauvegardées
                 if (data.data) {
-                    presetPositions = data.data;
+                    presetPositions = convertBackendPositions(data.data);
                     addLog('Positions chargées depuis le serveur', 'success');
+                    console.log("Positions chargées:", presetPositions);
                 }
             }
         }

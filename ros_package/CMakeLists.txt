@@ -40,10 +40,9 @@ include_directories(
 
 ## Installation CORRECTE des scripts Python
 catkin_install_python(PROGRAMS
-  scripts/dofbot_simple_controller.py
   scripts/vision_node.py
   scripts/final_camera_node.py
-  scripts/simple_camera_node.py
   scripts/i2c_controller_node.py
+  scripts/dofbot_tri_system.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

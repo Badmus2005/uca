@@ -14,7 +14,7 @@ class DofbotTriController:
         
         # ? PARAMÈTRES DE SÉCURITÉ
         self.SERVO_LIMITS = {
-            1: (0, 180),   # Base
+            1: (0, 270),   # Base
             2: (0, 180),   # Épaule  
             3: (0, 180),   # Coude
             4: (0, 180),   # Poignet
